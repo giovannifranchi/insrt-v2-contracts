@@ -47,7 +47,7 @@ contract VRFCoordinatorV2MockPlus is VRFCoordinatorV2Mock {
             _requestId,
             _words
         );
-        (bool success, ) = _consumer.call{ gas: req.callbackGasLimit }(callReq);
+        (success, ) = _consumer.call{ gas: req.callbackGasLimit }(callReq);
 
         uint96 payment = uint96(
             BASE_FEE + ((startGas - gasleft()) * GAS_PRICE_LINK)
@@ -58,7 +58,5 @@ contract VRFCoordinatorV2MockPlus is VRFCoordinatorV2Mock {
         s_subscriptions[req.subId].balance -= payment;
         delete (s_requests[_requestId]);
         emit RandomWordsFulfilled(_requestId, _requestId, payment, success);
-
-        return success;
     }
 }
