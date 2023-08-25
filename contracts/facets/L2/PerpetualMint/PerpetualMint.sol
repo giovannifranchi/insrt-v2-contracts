@@ -7,7 +7,7 @@ import { Pausable } from "@solidstate/contracts/security/pausable/Pausable.sol";
 
 import { IPerpetualMint } from "./IPerpetualMint.sol";
 import { PerpetualMintInternal } from "./PerpetualMintInternal.sol";
-import { PerpetualMintStorage as Storage } from "./Storage.sol";
+import { PerpetualMintStorage as Storage, VRFConfig } from "./Storage.sol";
 
 /// @title PerpetualMint facet contract
 /// @dev contains all externally called functions
@@ -140,9 +140,7 @@ contract PerpetualMint is
     }
 
     /// @inheritdoc IPerpetualMint
-    function setVRFConfig(
-        Storage.VRFConfig calldata config
-    ) external onlyOwner {
+    function setVRFConfig(VRFConfig calldata config) external onlyOwner {
         _setVRFConfig(config);
     }
 

@@ -3,10 +3,11 @@
 pragma solidity 0.8.21;
 
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
-import { IPerpetualMintInternal } from "../../../../../contracts/facets/L2/PerpetualMint/IPerpetualMintInternal.sol";
-import { PerpetualMintStorage as Storage } from "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
-import { L2ForkTest } from "../../../../L2ForkTest.t.sol";
+
 import { PerpetualMintTest } from "../PerpetualMint.t.sol";
+import { L2ForkTest } from "../../../../L2ForkTest.t.sol";
+import { IPerpetualMintInternal } from "../../../../../contracts/facets/L2/PerpetualMint/IPerpetualMintInternal.sol";
+import { PerpetualMintStorage as Storage, VRFConfig } from "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
 
 /// @title PerpetualMint_setVRFConfig
 /// @dev PerpetualMint test contract for testing expected behavior of the setVRFConfig function
@@ -17,8 +18,8 @@ contract PerpetualMint_setVRFConfig is
 {
     address nonOwner = address(5);
     uint256 newPrice = 0.6 ether;
-    Storage.VRFConfig NEW_CONFIG =
-        Storage.VRFConfig({
+    VRFConfig NEW_CONFIG =
+        VRFConfig({
             // Arbitrum 150 GWEI keyhash
             keyHash: bytes32("test"),
             // Initiated Subscription ID
@@ -33,9 +34,7 @@ contract PerpetualMint_setVRFConfig is
     function test_setVRFConfig() public {
         perpetualMint.setVRFConfig(NEW_CONFIG);
 
-        Storage.VRFConfig memory readConfig = _vrfConfig(
-            address(perpetualMint)
-        );
+        VRFConfig memory readConfig = _vrfConfig(address(perpetualMint));
 
         assert(NEW_CONFIG.keyHash == readConfig.keyHash);
         assert(NEW_CONFIG.subscriptionId == readConfig.subscriptionId);

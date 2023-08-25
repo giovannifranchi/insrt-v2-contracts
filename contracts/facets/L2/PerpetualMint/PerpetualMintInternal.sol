@@ -9,9 +9,8 @@ import { ERC721BaseInternal } from "@solidstate/contracts/token/ERC721/base/ERC7
 import { AddressUtils } from "@solidstate/contracts/utils/AddressUtils.sol";
 
 import { IPerpetualMintInternal } from "./IPerpetualMintInternal.sol";
-import { PerpetualMintStorage as Storage } from "./Storage.sol";
+import { AssetType, PerpetualMintStorage as Storage, VRFConfig } from "./Storage.sol";
 import { GuardsInternal } from "../common/GuardsInternal.sol";
-import { AssetType } from "../../../enums/AssetType.sol";
 
 /// @title PerpetualMintInternal facet contract
 /// @dev defines modularly all logic for the PerpetualMint mechanism in internal functions
@@ -866,7 +865,7 @@ abstract contract PerpetualMintInternal is
 
     /// @notice sets the Chainlink VRF config
     /// @param config VRFConfig struct holding all related data to ChainlinkVRF
-    function _setVRFConfig(Storage.VRFConfig calldata config) internal {
+    function _setVRFConfig(VRFConfig calldata config) internal {
         Storage.layout().vrfConfig = config;
 
         emit VRFConfigSet(config);

@@ -4,25 +4,11 @@ pragma solidity ^0.8.21;
 
 import { EnumerableSet } from "@solidstate/contracts/data/EnumerableSet.sol";
 
-import { AssetType } from "../../../enums/AssetType.sol";
+import "../common/types/DataTypes.sol";
 
 /// @title PerpetualMintStorage
 /// @dev defines storage layout for the PerpetualMint facet
 library PerpetualMintStorage {
-    /// @dev Encapsulates variables related to Chainlink VRF
-    /// @dev see: https://docs.chain.link/vrf/v2/subscription#set-up-your-contract-and-request
-    struct VRFConfig {
-        /// @dev Chainlink identifier for prioritizing transactions
-        /// different keyhashes have different gas prices thus different priorities
-        bytes32 keyHash;
-        /// @dev id of Chainlink subscription to VRF for PerpetualMint contract
-        uint64 subscriptionId;
-        /// @dev maximum amount of gas a user is willing to pay for completing the callback VRF function
-        uint32 callbackGasLimit;
-        /// @dev number of block confirmations the VRF service will wait to respond
-        uint16 minConfirmations;
-    }
-
     struct Layout {
         /// @dev all variables related to Chainlink VRF configuration
         VRFConfig vrfConfig;
@@ -91,6 +77,19 @@ library PerpetualMintStorage {
         /// @dev keeps track of the mint requests which have not yet been fulfilled, serving as the base
         /// for the withdrawal "state-machine" check
         mapping(address collection => EnumerableSet.UintSet requestIds) pendingRequests;
+        ///
+        ///
+        /// TEMPORARY STORAGE REFACTOR SCAFFOLDING - START
+        ///
+        ///
+        mapping(address collection => CollectionData) collections;
+        // Mapping from collection to owner to owner data
+        mapping(address collection => mapping(address owner => CollectionOwnerData)) collectionOwners;
+        ///
+        ///
+        /// TEMPORARY STORAGE REFACTOR SCAFFOLDING - END
+        ///
+        ///
     }
 
     bytes32 internal constant STORAGE_SLOT =

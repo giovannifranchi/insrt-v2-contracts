@@ -4,7 +4,7 @@ pragma solidity 0.8.21;
 
 import { IPausable } from "@solidstate/contracts/security/pausable/IPausable.sol";
 
-import { PerpetualMintStorage as Storage } from "./Storage.sol";
+import { PerpetualMintStorage as Storage, VRFConfig } from "./Storage.sol";
 
 /// @title IPerpetualMint
 /// @dev interface to PerpetualMint facet
@@ -115,7 +115,7 @@ interface IPerpetualMint is IPausable {
 
     /// @notice sets the Chainlink VRF config
     /// @param config VRFConfig struct holding all related data to ChainlinkVRF setup
-    function setVRFConfig(Storage.VRFConfig calldata config) external;
+    function setVRFConfig(VRFConfig calldata config) external;
 
     ///  @notice Triggers unpaused state, when contract is paused.
     function unpause() external;

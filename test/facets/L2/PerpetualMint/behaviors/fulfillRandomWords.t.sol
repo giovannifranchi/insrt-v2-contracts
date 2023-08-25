@@ -10,7 +10,7 @@ import { PerpetualMintTest } from "../PerpetualMint.t.sol";
 import { L2ForkTest } from "../../../../L2ForkTest.t.sol";
 import { VRFCoordinatorV2MockPlus } from "../../../../mocks/VRFCoordinatorV2MockPlus.sol";
 import { IPerpetualMintInternal } from "../../../../../contracts/facets/L2/PerpetualMint/IPerpetualMintInternal.sol";
-import { PerpetualMintStorage } from "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
+import "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
 
 /// @title PerpetualMint_fulfillRandomWords
 /// @dev PerpetualMint test contract for testing expected fulfillRandomWords behavior. Tested on an Arbitrum fork.
@@ -19,7 +19,7 @@ contract PerpetualMint_fulfillRandomWords is
     PerpetualMintTest,
     L2ForkTest
 {
-    PerpetualMintStorage.VRFConfig vrfConfig;
+    VRFConfig vrfConfig;
 
     VRFCoordinatorV2 private vrfCoordinatorV2;
 

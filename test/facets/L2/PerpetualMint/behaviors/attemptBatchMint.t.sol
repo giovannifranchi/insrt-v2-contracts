@@ -11,7 +11,7 @@ import { PerpetualMintTest } from "../PerpetualMint.t.sol";
 import { IVRFCoordinatorV2Events } from "../../../../interfaces/IVRFCoordinatorV2Events.sol";
 import { L2ForkTest } from "../../../../L2ForkTest.t.sol";
 import { IPerpetualMintInternal } from "../../../../../contracts/facets/L2/PerpetualMint/IPerpetualMintInternal.sol";
-import { PerpetualMintStorage } from "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
+import "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
 
 /// @title PerpetualMint_attemptBatchMint
 /// @dev PerpetualMint test contract for testing expected attemptBatchMint behavior. Tested on an Arbitrum fork.
@@ -95,9 +95,7 @@ contract PerpetualMint_attemptBatchMint is
                 (MINT_PRICE * TEST_MINT_ATTEMPTS) - postMintProtocolFees
         );
 
-        PerpetualMintStorage.VRFConfig memory vrfConfig = _vrfConfig(
-            address(perpetualMint)
-        );
+        VRFConfig memory vrfConfig = _vrfConfig(address(perpetualMint));
 
         uint256 mintRequestId = uint256(
             keccak256(
@@ -157,9 +155,7 @@ contract PerpetualMint_attemptBatchMint is
             bytes32(uint256(TEST_VRF_CONSUMER_NONCE)) // set nonce to 1 to activate the consumer
         );
 
-        PerpetualMintStorage.VRFConfig memory vrfConfig = _vrfConfig(
-            address(perpetualMint)
-        );
+        VRFConfig memory vrfConfig = _vrfConfig(address(perpetualMint));
 
         uint256 mintRequestPreSeed = uint256(
             keccak256(

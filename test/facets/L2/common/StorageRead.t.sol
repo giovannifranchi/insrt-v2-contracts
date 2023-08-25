@@ -5,8 +5,8 @@ pragma solidity 0.8.21;
 import "forge-std/StdStorage.sol";
 import "forge-std/Test.sol";
 import { EnumerableSet } from "@solidstate/contracts/data/EnumerableSet.sol";
-import { AssetType } from "../../../../contracts/enums/AssetType.sol";
-import { PerpetualMintStorage as Storage } from "../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
+
+import { AssetType, PerpetualMintStorage as Storage, VRFConfig } from "../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
 
 /// @title StorageRead library
 /// @dev read values from PerpetualMintStorage directly
@@ -18,7 +18,7 @@ abstract contract StorageRead is Test {
     /// @return config vrfConfig value
     function _vrfConfig(
         address target
-    ) internal view returns (Storage.VRFConfig memory config) {
+    ) internal view returns (VRFConfig memory config) {
         bytes32 slot = Storage.STORAGE_SLOT; //VRFConfig storage slot
 
         bytes32 secondSlot = bytes32(uint256(slot) + 1); // second slot of VRFConfig struct

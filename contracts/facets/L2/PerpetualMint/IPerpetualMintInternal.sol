@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.21;
 
-import { PerpetualMintStorage as Storage } from "./Storage.sol";
+import { PerpetualMintStorage as Storage, VRFConfig } from "./Storage.sol";
 
 /// @title IPerpetualMintInternal interface
 /// @dev contains all errors and events used in the PerpeutlaMint facet contract
@@ -99,5 +99,5 @@ interface IPerpetualMintInternal {
 
     /// @notice emitted when the Chainlink VRF config is set
     /// @param config VRFConfig struct holding all related data to ChainlinkVRF
-    event VRFConfigSet(Storage.VRFConfig config);
+    event VRFConfigSet(VRFConfig config);
 }
