@@ -355,11 +355,11 @@ contract L2AssetHandler is
             storage perpetualMintStorageLayout = PerpetualMintStorage.layout();
 
         if (assetType == AssetType.ERC1155) {
-            // Decode the payload to get the beneficary, the collection, the depositor, the tokenIds and the amounts for each tokenId
+            // Decode the payload to get the owner, the collection, the depositor, the tokenIds and the amounts for each tokenId
             (
                 ,
-                address beneficiary,
-                address collection,
+                address owner,
+                address _collection,
                 address depositor,
                 uint256[] memory risks,
                 uint256[] memory tokenIds,
@@ -379,17 +379,17 @@ contract L2AssetHandler is
 
             // Iterate over each token ID
             for (uint256 i = 0; i < tokenIds.length; ++i) {
-                // Add the beneficiary to the set of active owners for the token ID in the collection
+                // Add the specified owner to the set of active owners for the token ID in the collection
                 perpetualMintStorageLayout
-                .activeERC1155Owners[collection][tokenIds[i]].add(beneficiary);
+                .activeERC1155Owners[_collection][tokenIds[i]].add(owner);
 
-                // Update the amount of active ERC1155 tokens for the beneficiary and the token ID in the collection
-                perpetualMintStorageLayout.activeERC1155Tokens[beneficiary][
-                    collection
+                // Update the amount of active ERC1155 tokens for the owner and the token ID in the collection
+                perpetualMintStorageLayout.activeERC1155Tokens[owner][
+                    _collection
                 ][tokenIds[i]] += amounts[i];
 
                 // Add the token ID to the set of active token IDs in the collection
-                perpetualMintStorageLayout.activeTokenIds[collection].add(
+                perpetualMintStorageLayout.activeTokenIds[_collection].add(
                     tokenIds[i]
                 );
 
@@ -397,48 +397,48 @@ contract L2AssetHandler is
                 _enforceMaxActiveTokensLimit(
                     perpetualMintStorageLayout,
                     perpetualMintStorageLayout
-                        .activeTokenIds[collection]
+                        .activeTokenIds[_collection]
                         .length()
                 );
 
-                // Set the risk for the beneficiary and the token ID in the collection
+                // Set the risk for the owner and the token ID in the collection
                 // Currently for ERC1155 tokens, the risk is always the same for all token IDs in the collection
-                perpetualMintStorageLayout.depositorTokenRisk[beneficiary][
-                    collection
+                perpetualMintStorageLayout.depositorTokenRisk[owner][
+                    _collection
                 ][tokenIds[i]] = risks[i];
 
                 uint256 totalAddedRisk = risks[i] * amounts[i];
 
                 // Update the total risk for the token ID in the collection
-                perpetualMintStorageLayout.tokenRisk[collection][
+                perpetualMintStorageLayout.tokenRisk[_collection][
                     tokenIds[i]
                 ] += totalAddedRisk;
 
                 // Update the total number of active tokens in the collection
                 perpetualMintStorageLayout.totalActiveTokens[
-                    collection
+                    _collection
                 ] += amounts[i];
 
-                // Update the total risk for the beneficary in the collection
-                perpetualMintStorageLayout.totalDepositorRisk[beneficiary][
-                    collection
+                // Update the total risk for the owner in the collection
+                perpetualMintStorageLayout.totalDepositorRisk[owner][
+                    _collection
                 ] += totalAddedRisk;
 
                 // Update the total risk in the collection
                 perpetualMintStorageLayout.totalRisk[
-                    collection
+                    _collection
                 ] += totalAddedRisk;
             }
 
             // Add the collection to the set of active collections
-            perpetualMintStorageLayout.activeCollections.add(collection);
+            perpetualMintStorageLayout.activeCollections.add(_collection);
 
             // Set the asset type for the collection
-            perpetualMintStorageLayout.collectionType[collection] = assetType;
+            perpetualMintStorageLayout.collectionType[_collection] = assetType;
 
             emit ERC1155AssetsDeposited(
-                beneficiary,
-                collection,
+                owner,
+                _collection,
                 depositor,
                 risks,
                 tokenIds,
