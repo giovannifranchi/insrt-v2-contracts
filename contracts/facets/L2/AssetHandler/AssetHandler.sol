@@ -503,11 +503,11 @@ contract L2AssetHandler is
                 amounts
             );
         } else {
-            // Decode the payload to get the beneficiary, the collection, the depositor, and the tokenIds
+            // Decode the payload to get the owner, the collection, the depositor, and the tokenIds
             (
                 ,
-                address beneficiary,
-                address collection,
+                address owner,
+                address _collection,
                 address depositor,
                 uint256[] memory risks,
                 uint256[] memory tokenIds
@@ -519,7 +519,7 @@ contract L2AssetHandler is
             // Iterate over each token ID
             for (uint256 i = 0; i < tokenIds.length; ++i) {
                 // Add the token ID to the set of active token IDs in the collection
-                perpetualMintStorageLayout.activeTokenIds[collection].add(
+                perpetualMintStorageLayout.activeTokenIds[_collection].add(
                     tokenIds[i]
                 );
 
@@ -527,46 +527,44 @@ contract L2AssetHandler is
                 _enforceMaxActiveTokensLimit(
                     perpetualMintStorageLayout,
                     perpetualMintStorageLayout
-                        .activeTokenIds[collection]
+                        .activeTokenIds[_collection]
                         .length()
                 );
 
-                // Increment the count of active tokens for the beneficiary in the collection
-                ++perpetualMintStorageLayout.activeTokens[beneficiary][
-                    collection
-                ];
+                // Increment the count of active tokens for the owner in the collection
+                ++perpetualMintStorageLayout.activeTokens[owner][_collection];
 
-                // Mark the deposited ERC721 token as escrowed by the beneficiary in the collection
-                perpetualMintStorageLayout.escrowedERC721Owner[collection][
+                // Mark the deposited ERC721 token as escrowed by the owner in the collection
+                perpetualMintStorageLayout.escrowedERC721Owner[_collection][
                     tokenIds[i]
-                ] = beneficiary;
+                ] = owner;
 
                 // Set the risk for the token ID in the collection
-                perpetualMintStorageLayout.tokenRisk[collection][
+                perpetualMintStorageLayout.tokenRisk[_collection][
                     tokenIds[i]
                 ] = risks[i];
 
                 // Increment the total number of active tokens in the collection
-                ++perpetualMintStorageLayout.totalActiveTokens[collection];
+                ++perpetualMintStorageLayout.totalActiveTokens[_collection];
 
-                // Increase the total risk for the beneficiary in the collection
-                perpetualMintStorageLayout.totalDepositorRisk[beneficiary][
-                    collection
+                // Increase the total risk for the owner in the collection
+                perpetualMintStorageLayout.totalDepositorRisk[owner][
+                    _collection
                 ] += risks[i];
 
                 // Increase the total risk in the collection
-                perpetualMintStorageLayout.totalRisk[collection] += risks[i];
+                perpetualMintStorageLayout.totalRisk[_collection] += risks[i];
             }
 
             // Add the collection to the set of active collections
-            perpetualMintStorageLayout.activeCollections.add(collection);
+            perpetualMintStorageLayout.activeCollections.add(_collection);
 
             // Set the asset type for the collection
-            perpetualMintStorageLayout.collectionType[collection] = assetType;
+            perpetualMintStorageLayout.collectionType[_collection] = assetType;
 
             emit ERC721AssetsDeposited(
-                beneficiary,
-                collection,
+                owner,
+                _collection,
                 depositor,
                 risks,
                 tokenIds

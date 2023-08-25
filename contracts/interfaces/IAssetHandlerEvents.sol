@@ -36,12 +36,12 @@ interface IAssetHandlerEvents {
     );
 
     /// @notice Emitted when ERC721 assets are successfully deposited.
-    /// @param depositor The indexed address of the depositor.
+    /// @param owner The indexed address given ownership for the deposited assets on the destination chain.
     /// @param collection The indexed address of the ERC721 collection.
     /// @param risks The risk settings for the deposited assets.
     /// @param tokenIds Token IDs of the deposited ERC721 assets.
     event ERC721AssetsDeposited(
-        address indexed beneficiary,
+        address indexed owner,
         address indexed collection,
         address indexed depositor,
         uint256[] risks,

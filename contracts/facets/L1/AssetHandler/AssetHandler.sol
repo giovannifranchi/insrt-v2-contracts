@@ -65,7 +65,7 @@ contract L1AssetHandler is IL1AssetHandler, SolidStateLayerZeroClient {
 
     /// @inheritdoc IL1AssetHandler
     function depositERC721Assets(
-        address beneficiary,
+        address owner,
         address collection,
         uint16 layerZeroDestinationChainId,
         uint256[] calldata risks,
@@ -83,7 +83,7 @@ contract L1AssetHandler is IL1AssetHandler, SolidStateLayerZeroClient {
         }
 
         _depositERC721Assets(
-            beneficiary,
+            owner,
             collection,
             layerZeroDestinationChainId,
             risks,
@@ -91,7 +91,7 @@ contract L1AssetHandler is IL1AssetHandler, SolidStateLayerZeroClient {
         );
 
         emit ERC721AssetsDeposited(
-            beneficiary,
+            owner,
             collection,
             msg.sender,
             risks,
@@ -244,13 +244,13 @@ contract L1AssetHandler is IL1AssetHandler, SolidStateLayerZeroClient {
     }
 
     /// @notice Deposits ERC721 assets cross-chain using LayerZero.
-    /// @param beneficiary Address that will receive credit for the deposited assets on the destination chain.
+    /// @param owner Address that will be given ownership for the deposited assets on the destination chain.
     /// @param collection Address of the ERC721 collection.
     /// @param layerZeroDestinationChainId The LayerZero destination chain ID.
     /// @param risks The risk settings for the assets being deposited.
     /// @param tokenIds IDs of the tokens to be deposited.
     function _depositERC721Assets(
-        address beneficiary,
+        address owner,
         address collection,
         uint16 layerZeroDestinationChainId,
         uint256[] calldata risks,
@@ -259,7 +259,7 @@ contract L1AssetHandler is IL1AssetHandler, SolidStateLayerZeroClient {
         _lzSend(
             layerZeroDestinationChainId,
             PayloadEncoder.encodeDepositERC721AssetsPayload(
-                beneficiary,
+                owner,
                 collection,
                 msg.sender,
                 risks,

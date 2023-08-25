@@ -37,14 +37,14 @@ library PayloadEncoder {
     }
 
     /// @notice Encodes the payload for depositing ERC-721 assets cross-chain.
-    /// @param beneficiary Address of the beneficiary.
+    /// @param owner Address being given ownership.
     /// @param collection Address of the collection.
     /// @param depositor Address of the depositor.
     /// @param risks The risk settings for the assets being deposited.
     /// @param tokenIds Array of token ids.
     /// @return payload The encoded payload.
     function encodeDepositERC721AssetsPayload(
-        address beneficiary,
+        address owner,
         address collection,
         address depositor,
         uint256[] calldata risks,
@@ -53,7 +53,7 @@ library PayloadEncoder {
         // Pack the parameters into a dynamically-sized byte array
         payload = abi.encode(
             AssetType.ERC721,
-            beneficiary,
+            owner,
             collection,
             depositor,
             risks,
