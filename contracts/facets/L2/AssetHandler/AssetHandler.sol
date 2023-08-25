@@ -7,7 +7,7 @@ import { SolidStateLayerZeroClient } from "@solidstate/layerzero-client/SolidSta
 
 import { IL2AssetHandler } from "./IAssetHandler.sol";
 import { GuardsInternal } from "../common/GuardsInternal.sol";
-import { AssetType, CollectionData, CollectionOwnerData, ERC1155TokenData, ERC1155TokenOwnerData, PerpetualMintStorage } from "../PerpetualMint/Storage.sol";
+import { AssetType, CollectionData, CollectionOwnerData, ERC1155TokenData, ERC1155TokenOwnerData, ERC721TokenData, PerpetualMintStorage } from "../PerpetualMint/Storage.sol";
 import { IAssetHandler } from "../../../interfaces/IAssetHandler.sol";
 import { PayloadEncoder } from "../../../libraries/PayloadEncoder.sol";
 
@@ -555,6 +555,56 @@ contract L2AssetHandler is
                 // Increase the total risk in the collection
                 perpetualMintStorageLayout.totalRisk[_collection] += risks[i];
             }
+
+            ///
+            ///
+            /// TEMPORARY STORAGE REFACTOR SCAFFOLDING - START
+            ///
+            ///
+
+            CollectionOwnerData
+                storage collectionOwner = perpetualMintStorageLayout
+                    .collectionOwners[_collection][owner];
+
+            CollectionData storage collection = perpetualMintStorageLayout
+                .collections[_collection];
+
+            // Iterate over each token ID
+            for (uint256 i = 0; i < tokenIds.length; ++i) {
+                ERC721TokenData storage erc721Token = collection
+                    .tokens[tokenIds[i]]
+                    .erc721Token;
+
+                // Add the token ID to the set of active token IDs in the collection
+                collection.activeTokenIds.add(tokenIds[i]);
+
+                // Increment the total number of active tokens in the collection
+                ++collection.activeTokens;
+
+                // INcrease the total risk for the collection
+                collection.totalRisk += risks[i];
+
+                // Increment the count of active tokens for the owner in the collection
+                ++collectionOwner.activeTokens;
+
+                // Increase the total risk for the owner in the collection
+                collectionOwner.totalRisk += risks[i];
+
+                // Set the owner for the token ID in the collection
+                erc721Token.owner = owner;
+
+                // Set the risk for the token ID in the collection
+                erc721Token.risk = risks[i];
+            }
+
+            // Set the asset type for the collection
+            collection.assetType = assetType;
+
+            ///
+            ///
+            /// TEMPORARY STORAGE REFACTOR SCAFFOLDING - END
+            ///
+            ///
 
             // Add the collection to the set of active collections
             perpetualMintStorageLayout.activeCollections.add(_collection);
