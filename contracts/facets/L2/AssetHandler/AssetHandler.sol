@@ -7,8 +7,7 @@ import { SolidStateLayerZeroClient } from "@solidstate/layerzero-client/SolidSta
 
 import { IL2AssetHandler } from "./IAssetHandler.sol";
 import { GuardsInternal } from "../common/GuardsInternal.sol";
-import { PerpetualMintStorage } from "../PerpetualMint/Storage.sol";
-import { AssetType } from "../../../enums/AssetType.sol";
+import { AssetType, CollectionData, CollectionOwnerData, ERC1155TokenData, ERC1155TokenOwnerData, PerpetualMintStorage } from "../PerpetualMint/Storage.sol";
 import { IAssetHandler } from "../../../interfaces/IAssetHandler.sol";
 import { PayloadEncoder } from "../../../libraries/PayloadEncoder.sol";
 
@@ -429,6 +428,65 @@ contract L2AssetHandler is
                     _collection
                 ] += totalAddedRisk;
             }
+
+            ///
+            ///
+            /// TEMPORARY STORAGE REFACTOR SCAFFOLDING - START
+            ///
+            ///
+
+            CollectionOwnerData
+                storage collectionOwner = perpetualMintStorageLayout
+                    .collectionOwners[_collection][owner];
+
+            CollectionData storage collection = perpetualMintStorageLayout
+                .collections[_collection];
+
+            // Iterate over each token ID
+            for (uint256 i = 0; i < tokenIds.length; ++i) {
+                ERC1155TokenData storage erc1155Token = collection
+                    .tokens[tokenIds[i]]
+                    .erc1155Token;
+
+                ERC1155TokenOwnerData storage erc1155TokenOwner = erc1155Token
+                    .tokenOwnerData[owner];
+
+                uint256 totalAddedRisk = risks[i] * amounts[i];
+
+                // Add the token ID to the set of active token IDs in the collection
+                collection.activeTokenIds.add(tokenIds[i]);
+
+                // Update the total number of active tokens in the collection
+                collection.activeTokens += amounts[i];
+
+                // Update the total risk in the collection
+                collection.totalRisk += totalAddedRisk;
+
+                // Update the total risk for the owner in the collection
+                collectionOwner.totalRisk += totalAddedRisk;
+
+                // Add the owner to the set of active owners for the token ID in the collection
+                erc1155Token.owners.add(owner);
+
+                // Update the total risk for the token ID in the collection
+                erc1155Token.totalRisk += totalAddedRisk;
+
+                // Update the amount of active ERC1155 tokens for the owner and the token ID in the collection
+                erc1155TokenOwner.activeTokenAmount += amounts[i];
+
+                // Set the risk for the owner and the token ID in the collection
+                // Currently for ERC1155 tokens, the risk is always the same for all token IDs in the collection
+                erc1155TokenOwner.risk = risks[i];
+            }
+
+            // Set the asset type for the collection
+            collection.assetType = assetType;
+
+            ///
+            ///
+            /// TEMPORARY STORAGE REFACTOR SCAFFOLDING - END
+            ///
+            ///
 
             // Add the collection to the set of active collections
             perpetualMintStorageLayout.activeCollections.add(_collection);
