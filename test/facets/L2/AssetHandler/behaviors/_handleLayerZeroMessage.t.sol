@@ -8,7 +8,7 @@ import { L2AssetHandlerTest } from "../AssetHandler.t.sol";
 import { L2ForkTest } from "../../../../L2ForkTest.t.sol";
 import { L2AssetHandlerMock } from "../../../../mocks/L2AssetHandlerMock.t.sol";
 import { IGuardsInternal } from "../../../../../contracts/facets/L2/common/IGuardsInternal.sol";
-import { AssetType, CollectionData, CollectionOwnerData, ERC1155TokenData, ERC1155TokenOwnerData, PerpetualMintStorage } from "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
+import { AssetType, CollectionData, CollectionOwnerData, ERC1155TokenData, ERC1155TokenOwnerData, ERC721TokenData, PerpetualMintStorage } from "../../../../../contracts/facets/L2/PerpetualMint/Storage.sol";
 
 /// @title L2AssetHandler_handleLayerZeroMessage
 /// @dev L2AssetHandler test contract for testing expected L2 _handleLayerZeroMessage behavior. Tested on an Arbitrum fork.
@@ -142,77 +142,59 @@ contract L2AssetHandler_handleLayerZeroMessage is
             encodedData
         );
 
-        address escrowedERC721Owner = _escrowedERC721Owner(
-            address(this),
-            BORED_APE_YACHT_CLUB,
-            boredApeYachtClubTokenIds[0]
-        );
+        PerpetualMintStorage.Layout storage layout = PerpetualMintStorage
+            .layout();
 
-        // mappings are hash tables, so this assertion proves that the escrowed ERC721 owner
-        // was set correctly for the collection and the given token ID.
-        assertEq(escrowedERC721Owner, msg.sender);
-
-        uint256[] memory activeTokenIds = _activeTokenIds(
-            address(this),
+        CollectionOwnerData storage collectionOwner = layout.collectionOwners[
             BORED_APE_YACHT_CLUB
-        );
+        ][msg.sender];
+
+        CollectionData storage collection = layout.collections[
+            BORED_APE_YACHT_CLUB
+        ];
+
+        ERC721TokenData storage erc721Token = collection
+            .tokens[boredApeYachtClubTokenIds[0]]
+            .erc721Token;
+
+        // so this assertion proves that the specified ERC721 owner
+        // was set correctly for the collection and the given token ID.
+        assertEq(erc721Token.owner, msg.sender);
 
         // this assertion proves that the token ID was added to the set of active token IDs in the collection
-        assertEq(activeTokenIds[0], boredApeYachtClubTokenIds[0]);
-
-        uint256 activeTokensCount = _totalActiveTokens(
-            address(this),
-            BORED_APE_YACHT_CLUB
+        assert(
+            collection.activeTokenIds.contains(boredApeYachtClubTokenIds[0])
         );
 
-        // this assertion proves that the count of active tokens for the depositor in the collection was incremented correctly
-        assertEq(activeTokensCount, boredApeYachtClubTokenIds.length);
-
-        uint256 tokenRisk = _tokenRisk(
-            address(this),
-            BORED_APE_YACHT_CLUB,
-            boredApeYachtClubTokenIds[0]
+        // this assertion proves that the count of active tokens for the specified collection owner was incremented correctly
+        assertEq(
+            collectionOwner.activeTokens,
+            boredApeYachtClubTokenIds.length
         );
 
         // this assertion proves that the risk for the token ID in the collection was incremented correctly
-        assertEq(tokenRisk, testRisks[0]);
-
-        uint256 totalActiveTokens = _totalActiveTokens(
-            address(this),
-            BORED_APE_YACHT_CLUB
-        );
+        assertEq(erc721Token.risk, testRisks[0]);
 
         // this assertion proves that the total number of active tokens in the collection was incremented correctly
-        assertEq(totalActiveTokens, boredApeYachtClubTokenIds.length);
+        assertEq(collection.activeTokens, boredApeYachtClubTokenIds.length);
 
-        uint256 totalDepositorRisk = _totalDepositorRisk(
-            address(this),
-            msg.sender,
-            BORED_APE_YACHT_CLUB
-        );
-
-        // this assertion proves that the total risk for the depositor in the collection was incremented correctly
+        // this assertion proves that the total risk for the specified collection owner was incremented correctly
         assertEq(
-            totalDepositorRisk,
+            collectionOwner.totalRisk,
             testRisks[0] * boredApeYachtClubTokenIds.length
         );
 
-        uint256 totalRisk = _totalRisk(address(this), BORED_APE_YACHT_CLUB);
-
         // this assertion proves that the total risk in the collection was incremented correctly
-        assertEq(totalRisk, testRisks[0] * boredApeYachtClubTokenIds.length);
-
-        address[] memory activeCollections = _activeCollections(address(this));
-
-        // this assertion proves that the collection was added to the set of active collections
-        assertEq(activeCollections[0], BORED_APE_YACHT_CLUB);
-
-        AssetType collectionType = _collectionType(
-            address(this),
-            BORED_APE_YACHT_CLUB
+        assertEq(
+            collection.totalRisk,
+            testRisks[0] * boredApeYachtClubTokenIds.length
         );
 
-        assert(collectionType == AssetType.ERC721);
+        // this assertion proves that the collection was added to the set of active collections
+        assert(layout.activeCollections.contains(BORED_APE_YACHT_CLUB));
+
+        // this assertion proves that the collection asset type was set correctly
+        assert(collection.assetType == AssetType.ERC721);
     }
 
     /// @dev Tests that _handleLayerZeroMessage emits an ERC721AssetsDeposited event when depositing ERC721 tokens.
