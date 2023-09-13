@@ -5,11 +5,13 @@ pragma solidity ^0.8.21;
 import { VRFCoordinatorV2Interface } from "@chainlink/interfaces/VRFCoordinatorV2Interface.sol";
 import { VRFConsumerBaseV2 } from "@chainlink/vrf/VRFConsumerBaseV2.sol";
 import { EnumerableSet } from "@solidstate/contracts/data/EnumerableSet.sol";
+import { IERC721 } from "@solidstate/contracts/interfaces/IERC721.sol";
+import { IERC1155 } from "@solidstate/contracts/interfaces/IERC1155.sol";
 import { ERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/ERC1155BaseInternal.sol";
 import { AddressUtils } from "@solidstate/contracts/utils/AddressUtils.sol";
 
 import { IPerpetualMintInternal } from "./IPerpetualMintInternal.sol";
-import { CollectionData, PerpetualMintStorage as Storage, RequestData, TiersData, VRFConfig } from "./Storage.sol";
+import { AssetType, CollectionData, PerpetualMintStorage as Storage, RequestData, TiersData, VRFConfig } from "./Storage.sol";
 import { IToken } from "../Token/IToken.sol";
 
 /// @title PerpetualMintInternal facet contract
@@ -310,6 +312,36 @@ abstract contract PerpetualMintInternal is
         collectionData.pendingRequests.remove(requestId);
 
         delete l.requests[requestId];
+    }
+
+    /// @notice confirms a won asset has been sent and burns related receipt
+    /// @param owner address of asset owner
+    /// @param winner address of winning account
+    /// @param collection address of asset collection
+    /// @param tokenId id of transferred asset
+    /// @param collectionType type of collection
+    function _fulfillWin(
+        address owner,
+        address winner,
+        address collection,
+        uint256 tokenId,
+        AssetType collectionType
+    ) internal {
+        if (collectionType == AssetType.ERC721) {
+            IERC721(collection).safeTransferFrom(owner, winner, tokenId);
+        } else if (collectionType == AssetType.ERC1155) {
+            IERC1155(collection).safeTransferFrom(
+                owner,
+                winner,
+                tokenId,
+                1,
+                "0x"
+            );
+        }
+
+        _burn(winner, uint256(bytes32(abi.encode(collection))), 1);
+
+        emit WinFulfilled(winner, collection, tokenId);
     }
 
     /// @notice Returns the current mint fee in basis points

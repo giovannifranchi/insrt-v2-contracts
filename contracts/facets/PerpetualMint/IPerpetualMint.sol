@@ -4,7 +4,7 @@ pragma solidity 0.8.21;
 
 import { IPausable } from "@solidstate/contracts/security/pausable/IPausable.sol";
 
-import { PerpetualMintStorage as Storage, TiersData, VRFConfig } from "./Storage.sol";
+import { AssetType, PerpetualMintStorage as Storage, TiersData, VRFConfig } from "./Storage.sol";
 
 /// @title IPerpetualMint
 /// @dev Interface of the PerpetualMint facet
@@ -88,6 +88,18 @@ interface IPerpetualMint is IPausable {
     /// @notice Returns the current ETH to $MINT ratio
     /// @return ratio current ETH to $MINT ratio
     function ethToMintRatio() external view returns (uint256 ratio);
+
+    /// @notice confirms a won asset has been sent and burns related receipt
+    /// @param winner address of winning account
+    /// @param collection address of asset collection
+    /// @param tokenId id of transferred asset
+    /// @param collectionType type of collection
+    function fulfillWin(
+        address winner,
+        address collection,
+        uint256 tokenId,
+        AssetType collectionType
+    ) external;
 
     /// @notice Returns the mint fee in basis points
     /// @return mintFeeBasisPoints mint fee in basis points

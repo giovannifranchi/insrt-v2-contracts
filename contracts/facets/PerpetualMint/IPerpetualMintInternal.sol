@@ -45,4 +45,10 @@ interface IPerpetualMintInternal {
     /// @notice emitted when the Chainlink VRF config is set
     /// @param config VRFConfig struct holding all related data to ChainlinkVRF
     event VRFConfigSet(VRFConfig config);
+
+    /// @notice emitted when a win is fulfilled
+    /// @param winner address of winning account
+    /// @param collection address of asset collection
+    /// @param tokenId id of transferred asset
+    event WinFulfilled(address winner, address collection, uint256 tokenId);
 }

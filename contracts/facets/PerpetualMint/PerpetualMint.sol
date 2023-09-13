@@ -7,7 +7,7 @@ import { Pausable } from "@solidstate/contracts/security/pausable/Pausable.sol";
 
 import { IPerpetualMint } from "./IPerpetualMint.sol";
 import { PerpetualMintInternal } from "./PerpetualMintInternal.sol";
-import { PerpetualMintStorage as Storage, TiersData, VRFConfig } from "./Storage.sol";
+import { AssetType, PerpetualMintStorage as Storage, TiersData, VRFConfig } from "./Storage.sol";
 
 /// @title PerpetualMint facet contract
 /// @dev contains all externally called functions
@@ -118,6 +118,16 @@ contract PerpetualMint is
     /// @inheritdoc IPerpetualMint
     function ethToMintRatio() external view returns (uint256 ratio) {
         ratio = _ethToMintRatio(Storage.layout());
+    }
+
+    /// @inheritdoc IPerpetualMint
+    function fulfillWin(
+        address winner,
+        address collection,
+        uint256 tokenId,
+        AssetType collectionType
+    ) external onlyOwner {
+        _fulfillWin(_owner(), winner, collection, tokenId, collectionType);
     }
 
     /// @inheritdoc IPerpetualMint
