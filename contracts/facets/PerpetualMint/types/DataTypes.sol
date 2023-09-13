@@ -6,6 +6,16 @@ import { EnumerableSet } from "@solidstate/contracts/data/EnumerableSet.sol";
 
 /// @dev DataTypes.sol defines the PerpetualMint struct data types used in the PerpetualMintStorage layout
 
+/// @dev Represents the asset type of a particular collection
+enum AssetType {
+    /// @dev signifies ERC721 collection
+    ERC721,
+    /// @dev signifies ERC1155 collection
+    ERC1155,
+    /// @dev signifies real world asset
+    RWA
+}
+
 /// @dev Represents data specific to a collection
 struct CollectionData {
     /// @dev keeps track of mint requests which have not yet been fulfilled
