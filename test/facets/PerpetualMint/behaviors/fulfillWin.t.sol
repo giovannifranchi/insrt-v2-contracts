@@ -182,7 +182,12 @@ contract PerpetualMint_fulfillWin is
     function test_fulfillWinRevertsWhen_CalledByNonOwner() public {
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
 
-        vm.prank(NON_OWNER);
-        perpetualMint.fulfillWin(NON_OWNER, SMOL_CARS, 1, AssetType.ERC721);
+        vm.prank(PERPETUAL_MINT_NON_OWNER);
+        perpetualMint.fulfillWin(
+            PERPETUAL_MINT_NON_OWNER,
+            SMOL_CARS,
+            1,
+            AssetType.ERC721
+        );
     }
 }
