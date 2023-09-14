@@ -47,6 +47,11 @@ contract PerpetualMintHarness is
     }
 
     /// @inheritdoc IPerpetualMintHarness
+    function exposed_mint(address to, uint256 tokenId) external {
+        _mint(to, tokenId, 1, "0x");
+    }
+
+    /// @inheritdoc IPerpetualMintHarness
     function exposed_normalizeValue(
         uint256 value,
         uint32 basis

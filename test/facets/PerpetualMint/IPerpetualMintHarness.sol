@@ -22,6 +22,9 @@ interface IPerpetualMintHarness {
     /// @dev exposes _enforceNoPendingMints
     function exposed_enforceNoPendingMints(address collection) external view;
 
+    /// @dev exposes minting functionality (receipt)
+    function exposed_mint(address to, uint256 tokenId) external;
+
     /// @dev exposes _normalizeValue
     function exposed_normalizeValue(
         uint256 value,
