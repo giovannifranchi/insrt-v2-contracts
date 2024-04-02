@@ -9,6 +9,7 @@ import { IPausable } from "@solidstate/contracts/security/pausable/IPausable.sol
 import { IERC1155Metadata } from "@solidstate/contracts/token/ERC1155/metadata/IERC1155Metadata.sol";
 
 import { IPerpetualMintHarness } from "../IPerpetualMintHarness.sol";
+import { IPerpetualMintHarnessSupra } from "../Supra/IPerpetualMintHarness.sol";
 import { PerpetualMintHarnessSupra } from "../Supra/PerpetualMintHarness.t.sol";
 import { ICore } from "../../../../contracts/diamonds/Core/ICore.sol";
 import { IPerpetualMint } from "../../../../contracts/facets/PerpetualMint/IPerpetualMint.sol";
@@ -482,7 +483,7 @@ contract PerpetualMintHelper_Base {
     {
         selectors = new bytes4[](1);
 
-        selectors[0] = IPerpetualMintHarness
+        selectors[0] = IPerpetualMintHarnessSupra
             .exposed_requestRandomWordsSupra
             .selector;
     }
