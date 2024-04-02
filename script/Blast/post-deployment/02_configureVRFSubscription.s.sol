@@ -16,17 +16,20 @@ contract ConfigureVRFSubscription_Blast is BatchScript {
         // get PerpetualMint address
         address payable perpetualMint = readCoreBlastAddress();
 
-        // get Gnosis Safe (protocol owner) address
-        address gnosisSafeAddress = vm.envAddress("GNOSIS_SAFE");
+        // // get Gnosis Safe (protocol owner) address
+        // address gnosisSafeAddress = vm.envAddress("GNOSIS_SAFE");
 
         // get set Supra VRF Router address
         address vrfRouter = readVRFRouterAddress();
 
+        uint256 deployerPrivateKey = vm.envUint("DEPLOYER_KEY");
+
+        vm.startBroadcast(deployerPrivateKey);
+
         uint256 envEthAmountToFundSubscription = vm.envUint("ETH_FUND_AMOUNT");
 
         // scale ETH amount to fund subscription by 1e18
-        uint256 ethAmountToFundSubscription = envEthAmountToFundSubscription *
-            1 ether;
+        uint256 ethAmountToFundSubscription = 0.5 ether;
 
         address supraVRFDepositContract = ISupraRouterContract(vrfRouter)
             ._depositContract();
@@ -36,21 +39,29 @@ contract ConfigureVRFSubscription_Blast is BatchScript {
             perpetualMint
         );
 
-        addToBatch(supraVRFDepositContract, addContractToWhitelistTx);
+        // IDepositContract(supraVRFDepositContract).addContractToWhitelist(
+        //     perpetualMint
+        // );
+
+        // addToBatch(supraVRFDepositContract, addContractToWhitelistTx);
 
         if (ethAmountToFundSubscription > 0) {
             bytes memory depositFundClientTx = abi.encodeWithSelector(
                 IDepositContract.depositFundClient.selector
             );
 
-            addToBatch(
-                supraVRFDepositContract,
-                ethAmountToFundSubscription,
-                depositFundClientTx
-            );
+            IDepositContract(supraVRFDepositContract).depositFundClient{
+                value: ethAmountToFundSubscription
+            }();
+
+            // addToBatch(
+            //     supraVRFDepositContract,
+            //     ethAmountToFundSubscription,
+            //     depositFundClientTx
+            // );
         }
 
-        executeBatch(gnosisSafeAddress, true);
+        // executeBatch(gnosisSafeAddress, true);
 
         console2.log("Supra VRF Router Address: ", vrfRouter);
         console2.log("Supra VRF Consumer Added: ", perpetualMint);

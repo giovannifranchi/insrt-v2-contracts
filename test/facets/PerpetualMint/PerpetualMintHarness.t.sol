@@ -9,7 +9,7 @@ import { EnumerableSet } from "@solidstate/contracts/data/EnumerableSet.sol";
 import { IPerpetualMintHarness } from "./IPerpetualMintHarness.sol";
 import { VRFConsumerBaseV2Mock } from "../../mocks/VRFConsumerBaseV2Mock.sol";
 import { PerpetualMint } from "../../../contracts/facets/PerpetualMint/PerpetualMint.sol";
-import { CollectionData, MintTokenTiersData, RequestData, PerpetualMintStorage as Storage, TiersData, VRFConfig } from "../../../contracts/facets/PerpetualMint/Storage.sol";
+import { CollectionData, MintTokenTiersData, RequestData, PerpetualMintStorage as Storage, TiersData } from "../../../contracts/facets/PerpetualMint/Storage.sol";
 
 /// @title PerpetualMintHarness
 /// @dev exposes PerpetualMint external & internal functions for testing
@@ -95,27 +95,6 @@ contract PerpetualMintHarness is
     }
 
     /// @inheritdoc IPerpetualMintHarness
-    function exposed_requestRandomWordsSupra(
-        address minter,
-        address collection,
-        uint256 mintPriceAdjustmentFactor,
-        uint8 numWords
-    ) external {
-        Storage.Layout storage l = Storage.layout();
-
-        CollectionData storage collectionData = l.collections[collection];
-
-        _requestRandomWordsSupra(
-            l,
-            collectionData,
-            minter,
-            collection,
-            mintPriceAdjustmentFactor,
-            numWords
-        );
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
     function exposed_requests(
         uint256 requestId
     )
@@ -141,6 +120,7 @@ contract PerpetualMintHarness is
         address minter,
         address collection,
         uint256 mintPriceAdjustmentFactor,
+        uint256 collectionFloorPrice,
         uint256[] memory randomWords
     ) external {
         Storage.Layout storage l = Storage.layout();
@@ -157,7 +137,8 @@ contract PerpetualMintHarness is
             minter,
             collection,
             randomWords,
-            _ethToMintRatio(l)
+            _ethToMintRatio(l),
+            collectionFloorPrice
         );
     }
 
@@ -199,6 +180,26 @@ contract PerpetualMintHarness is
     }
 
     /// @inheritdoc IPerpetualMintHarness
+    function mintReceipts(
+        address collection,
+        uint256 receiptAmount,
+        uint256 collectionFloorPrice
+    ) external {
+        uint256[] memory tokenValues = new uint256[](receiptAmount);
+
+        for (uint256 i = 0; i < receiptAmount; ++i) {
+            tokenValues[i] = collectionFloorPrice;
+        }
+
+        _safeMint(
+            msg.sender,
+            uint256(bytes32(abi.encode(collection))),
+            receiptAmount,
+            abi.encode(tokenValues)
+        );
+    }
+
+    /// @inheritdoc IPerpetualMintHarness
     function setConsolationFees(uint256 amount) external {
         Storage.layout().consolationFees = amount;
     }
@@ -218,12 +219,14 @@ contract PerpetualMintHarness is
         uint256 requestId,
         address minter,
         address collection,
-        uint256 mintPriceAdjustmentFactor
+        uint256 mintPriceAdjustmentFactor,
+        uint256 collectionFloorPrice
     ) external {
         Storage.layout().requests[requestId] = RequestData({
             collection: collection,
             minter: minter,
-            mintPriceAdjustmentFactor: mintPriceAdjustmentFactor
+            mintPriceAdjustmentFactor: mintPriceAdjustmentFactor,
+            collectionFloorPrice: collectionFloorPrice
         });
     }
 }

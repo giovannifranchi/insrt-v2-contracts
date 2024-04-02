@@ -134,7 +134,12 @@ contract PerpetualMint_fulfillRandomWords is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(MINT_FOR_COLLECTION_ADDRESS, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            MINT_FOR_COLLECTION_ADDRESS,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint32 numberOfRandomWordsRequested = TEST_MINT_ATTEMPTS * 2; // 2 words per mint for collection attempt
 
@@ -159,7 +164,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_COLLECTION_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -235,7 +241,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_MINT_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_MINT_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -288,6 +295,7 @@ contract PerpetualMint_fulfillRandomWords is
             MINT_FOR_COLLECTION_ADDRESS,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
 
@@ -314,7 +322,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_COLLECTION_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -394,7 +403,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_MINT_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_MINT_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -453,7 +463,12 @@ contract PerpetualMint_fulfillRandomWords is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * MAXIMUM_MINT_ATTEMPTS
-        }(MINT_FOR_COLLECTION_ADDRESS, NO_REFERRER, MAXIMUM_MINT_ATTEMPTS);
+        }(
+            MINT_FOR_COLLECTION_ADDRESS,
+            NO_REFERRER,
+            MAXIMUM_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         vm.expectRevert(
             abi.encodeWithSelector(
@@ -464,7 +479,12 @@ contract PerpetualMint_fulfillRandomWords is
         );
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * (MAXIMUM_MINT_ATTEMPTS + 1)
-        }(MINT_FOR_COLLECTION_ADDRESS, NO_REFERRER, MAXIMUM_MINT_ATTEMPTS + 1);
+        }(
+            MINT_FOR_COLLECTION_ADDRESS,
+            NO_REFERRER,
+            MAXIMUM_MINT_ATTEMPTS + 1,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint32 numberOfRandomWordsRequested = currentMaxNumWords; // 2 words per mint for collection attempt
 
@@ -489,7 +509,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_COLLECTION_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -576,7 +597,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_MINT_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_MINT_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -631,6 +653,7 @@ contract PerpetualMint_fulfillRandomWords is
             MINT_FOR_COLLECTION_ADDRESS,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             MAXIMUM_MINT_ATTEMPTS
         );
 
@@ -647,6 +670,7 @@ contract PerpetualMint_fulfillRandomWords is
             MINT_FOR_COLLECTION_ADDRESS,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             MAXIMUM_MINT_ATTEMPTS + 1
         );
 
@@ -673,7 +697,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_COLLECTION_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -768,7 +793,8 @@ contract PerpetualMint_fulfillRandomWords is
             mockMintRequestId,
             minter,
             MINT_FOR_MINT_ADDRESS,
-            TEST_ADJUSTMENT_FACTOR
+            TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_MINT_FLOOR_PRICE
         );
 
         // calculate and store the mint fulfillment block number using vrf config min confirmations
@@ -819,7 +845,12 @@ contract PerpetualMint_fulfillRandomWords is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(MINT_FOR_COLLECTION_ADDRESS, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            MINT_FOR_COLLECTION_ADDRESS,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint32 numberOfRandomWordsRequested = TEST_MINT_ATTEMPTS * 2; // 2 words per mint attempt
 

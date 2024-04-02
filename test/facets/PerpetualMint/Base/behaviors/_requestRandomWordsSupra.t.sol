@@ -47,6 +47,7 @@ contract PerpetualMint_requestRandomWordsSupra is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_NUM_WORDS
         );
     }
@@ -60,6 +61,7 @@ contract PerpetualMint_requestRandomWordsSupra is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_NUM_WORDS
         );
 
@@ -95,6 +97,7 @@ contract PerpetualMint_requestRandomWordsSupra is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             ++currentMaxNumWords
         );
     }
@@ -112,6 +115,7 @@ contract PerpetualMint_requestRandomWordsSupra is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_NUM_WORDS
         );
     }
@@ -130,6 +134,7 @@ contract PerpetualMint_requestRandomWordsSupra is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_NUM_WORDS
         );
     }
@@ -148,6 +153,7 @@ contract PerpetualMint_requestRandomWordsSupra is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_NUM_WORDS
         );
     }

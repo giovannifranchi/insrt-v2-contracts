@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import { MintTokenTiersData, PerpetualMintStorage as Storage, TiersData, VRFConfig } from "./Storage.sol";
+import { MintTokenTiersData, PerpetualMintStorage as Storage, RequestData, TiersData, VRFConfig } from "./Storage.sol";
 
 /// @title IPerpetualMintInternal
 /// @dev Interface containing all errors and events used in the PerpetualMint facet contract
@@ -141,10 +141,12 @@ interface IPerpetualMintInternal {
     /// @param claimer address of claimer
     /// @param prizeRecipient address of specified prize recipient
     /// @param collection address of collection prize
+    /// @param collectionFloorPrice floor price of collection prize at time of win
     event PrizeClaimed(
         address claimer,
         address prizeRecipient,
-        address indexed collection
+        address indexed collection,
+        uint256 collectionFloorPrice
     );
 
     /// @notice emitted when redeemPaused is set

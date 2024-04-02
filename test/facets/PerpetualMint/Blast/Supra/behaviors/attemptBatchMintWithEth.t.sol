@@ -46,7 +46,12 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(COLLECTION, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint256 postMintAccruedConsolationFees = perpetualMint
             .accruedConsolationFees();
@@ -110,7 +115,12 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(COLLECTION, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint256 postMintAccruedConsolationFees = perpetualMint
             .accruedConsolationFees();
@@ -174,7 +184,12 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(COLLECTION, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint256 postMintAccruedConsolationFees = perpetualMint
             .accruedConsolationFees();
@@ -237,7 +252,12 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(COLLECTION, REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint256 postMintAccruedConsolationFees = perpetualMint
             .accruedConsolationFees();
@@ -322,7 +342,12 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(COLLECTION, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint256 postMintAccruedConsolationFees = perpetualMint
             .accruedConsolationFees();
@@ -369,7 +394,12 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
 
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS + 1
-        }(COLLECTION, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
     }
 
     /// @dev Tests that attemptBatchMintWithEth functionality reverts when attempting to mint with less than MINIMUM_PRICE_PER_SPIN.
@@ -381,7 +411,8 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
         perpetualMint.attemptBatchMintWithEth(
             COLLECTION,
             NO_REFERRER,
-            TEST_MINT_ATTEMPTS
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
         );
     }
 
@@ -393,7 +424,12 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
 
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(COLLECTION, NO_REFERRER, ZERO_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            NO_REFERRER,
+            ZERO_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
     }
 
     /// @dev Tests that attemptBatchMintWithEth functionality reverts when the contract is paused.
@@ -405,6 +441,11 @@ contract PerpetualMint_attemptBatchMintWithEthSupraBlast is
 
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(COLLECTION, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            COLLECTION,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
     }
 }

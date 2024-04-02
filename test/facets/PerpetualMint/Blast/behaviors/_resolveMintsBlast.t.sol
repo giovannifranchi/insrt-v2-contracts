@@ -8,7 +8,7 @@ import { BlastForkTest } from "../../../../BlastForkTest.t.sol";
 import { CoreTest } from "../../../../diamonds/Core/Core.t.sol";
 import { TokenProxyTest } from "../../../../diamonds/TokenProxy.t.sol";
 import { GasMode } from "../../../../../contracts/diamonds/Core/Blast/IBlast.sol";
-import { IPerpetualMintInternal } from "../../../../../contracts/facets/PerpetualMint/IPerpetualMintInternal.sol";
+import { IPerpetualMintInternal, RequestData } from "../../../../../contracts/facets/PerpetualMint/IPerpetualMintInternal.sol";
 
 /// @title PerpetualMint_resolveMintsBlast
 /// @dev PerpetualMint test contract for testing expected behavior of the _resolveMintsBlast function
@@ -62,9 +62,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -120,9 +123,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -177,9 +183,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -218,9 +227,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -244,9 +256,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -272,9 +287,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -305,9 +323,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -327,9 +348,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -353,9 +377,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
     }
@@ -371,9 +398,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.startPrank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
 
@@ -383,9 +413,12 @@ contract PerpetualMint_resolveMintsBlast is
         vm.expectRevert(IPerpetualMintInternal.UnmatchedRandomWords.selector);
 
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
     }
@@ -402,9 +435,12 @@ contract PerpetualMint_resolveMintsBlast is
 
         vm.prank(address(perpetualMint));
         perpetualMint.exposed_resolveMintsBlast(
-            minter,
-            COLLECTION,
-            TEST_ADJUSTMENT_FACTOR,
+            RequestData({
+                collection: COLLECTION,
+                minter: minter,
+                mintPriceAdjustmentFactor: TEST_ADJUSTMENT_FACTOR,
+                collectionFloorPrice: TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+            }),
             randomWords
         );
     }

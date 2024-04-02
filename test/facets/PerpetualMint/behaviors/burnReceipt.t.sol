@@ -20,11 +20,24 @@ contract PerpetualMint_burnReceipt is ArbForkTest, PerpetualMintTest {
     function setUp() public override {
         super.setUp();
 
+        // legacy collection receipt mint
         vm.prank(minter);
         perpetualMint.mintReceipts(testCollection, 1);
 
+        // collection receipt mint with floor price
         vm.prank(minter);
-        perpetualMint.claimPrize(minter, testTokenId);
+        perpetualMint.mintReceipts(
+            testCollection,
+            1,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
+
+        vm.prank(minter);
+        perpetualMint.claimPrize(
+            minter,
+            testTokenId,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
     }
 
     /// @dev tests that burnReceipt burns a single receipt of the given token ID from the PerpetualMint contract

@@ -2,213 +2,107 @@
 
 pragma solidity 0.8.19;
 
-import "forge-std/Test.sol";
+import { VRFConsumerBaseV2 } from "@chainlink/vrf/VRFConsumerBaseV2.sol";
 
-import { EnumerableSet } from "@solidstate/contracts/data/EnumerableSet.sol";
-
+import { IPerpetualMintHarnessSupraBlast } from "./IPerpetualMintHarness.sol";
 import { IPerpetualMintHarnessBlast } from "../IPerpetualMintHarness.sol";
-import { IPerpetualMintHarness } from "../../IPerpetualMintHarness.sol";
-import { VRFConsumerBaseV2Mock } from "../../../../mocks/VRFConsumerBaseV2Mock.sol";
-import { PerpetualMintSupraBlast } from "../../../../../contracts/facets/PerpetualMint/Blast/Supra/PerpetualMint.sol";
-import { CollectionData, MintTokenTiersData, RequestData, PerpetualMintStorage as Storage, TiersData, VRFConfig } from "../../../../../contracts/facets/PerpetualMint/Storage.sol";
+import { PerpetualMintHarness } from "../../PerpetualMintHarness.t.sol";
+import { IPerpetualMintHarnessSupra } from "../../Supra/IPerpetualMintHarness.sol";
+import { PerpetualMint } from "../../../../../contracts/facets/PerpetualMint/PerpetualMint.sol";
+import { CollectionData, MintTokenTiersData, RequestData, PerpetualMintStorage as Storage, TiersData } from "../../../../../contracts/facets/PerpetualMint/Storage.sol";
 
 /// @title PerpetualMintHarnessSupraBlast
 /// @dev exposes PerpetualMintSupraBlast external & internal functions for testing
 contract PerpetualMintHarnessSupraBlast is
-    IPerpetualMintHarnessBlast,
-    PerpetualMintSupraBlast,
-    Test,
-    VRFConsumerBaseV2Mock
+    IPerpetualMintHarnessSupraBlast,
+    PerpetualMintHarness
 {
-    using EnumerableSet for EnumerableSet.UintSet;
+    /// @dev number of words used in mints for $MINT
+    uint8 private constant TWO_WORDS = 2;
 
-    constructor(address vrf) PerpetualMintSupraBlast(vrf) {}
+    /// @dev number of words used in mints for collections
+    uint8 private constant THREE_WORDS = 3;
 
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_enforceBasis(uint32 value) external pure {
-        _enforceBasis(value, _BASIS());
-    }
+    constructor(address vrf) PerpetualMintHarness(vrf) {}
 
-    function exposed_enforceNoPendingMints(address collection) external view {
-        CollectionData storage collectionData = Storage.layout().collections[
-            collection
-        ];
-
-        _enforceNoPendingMints(collectionData);
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_normalizeValue(
-        uint256 value,
-        uint32 basis
-    ) external pure returns (uint256 normalizedValue) {
-        normalizedValue = _normalizeValue(value, basis);
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_pendingRequestsAdd(
-        address collection,
-        uint256 requestId
-    ) external {
-        Storage.layout().collections[collection].pendingRequests.add(requestId);
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_pendingRequestsAt(
-        address collection,
-        uint256 index
-    ) external view returns (uint256 requestId) {
-        requestId = Storage.layout().collections[collection].pendingRequests.at(
-            index
+    function attemptBatchMintForMintWithEth(
+        address referrer,
+        uint32 numberOfMints
+    ) external payable override whenNotPaused {
+        _attemptBatchMintForMintWithEthSupra(
+            msg.sender,
+            referrer,
+            uint8(numberOfMints),
+            TWO_WORDS
         );
     }
 
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_pendingRequestsLength(
-        address collection
-    ) external view returns (uint256 length) {
-        length = Storage
-            .layout()
-            .collections[collection]
-            .pendingRequests
-            .length();
+    function attemptBatchMintForMintWithMint(
+        address referrer,
+        uint256 pricePerMint,
+        uint32 numberOfMints
+    ) external override whenNotPaused {
+        _attemptBatchMintForMintWithMintSupra(
+            msg.sender,
+            referrer,
+            pricePerMint,
+            uint8(numberOfMints),
+            TWO_WORDS
+        );
     }
 
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_requestRandomWords(
-        address minter,
+    function attemptBatchMintWithEth(
         address collection,
-        uint256 mintPriceAdjustmentFactor,
-        uint32 numWords
-    ) external {
-        Storage.Layout storage l = Storage.layout();
-
-        CollectionData storage collectionData = l.collections[collection];
-
-        _requestRandomWords(
-            l,
-            collectionData,
-            minter,
+        address referrer,
+        uint32 numberOfMints,
+        uint256 collectionFloorPrice
+    ) external payable override whenNotPaused {
+        _attemptBatchMintWithEthSupra(
+            msg.sender,
             collection,
-            mintPriceAdjustmentFactor,
-            numWords
+            referrer,
+            uint8(numberOfMints),
+            THREE_WORDS,
+            collectionFloorPrice
         );
     }
 
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_requestRandomWordsSupra(
-        address minter,
+    function attemptBatchMintWithMint(
         address collection,
-        uint256 mintPriceAdjustmentFactor,
-        uint8 numWords
-    ) external {
-        Storage.Layout storage l = Storage.layout();
-
-        CollectionData storage collectionData = l.collections[collection];
-
-        _requestRandomWordsSupra(
-            l,
-            collectionData,
-            minter,
+        address referrer,
+        uint256 pricePerMint,
+        uint256 collectionFloorPrice,
+        uint32 numberOfMints
+    ) external override whenNotPaused {
+        _attemptBatchMintWithMintSupra(
+            msg.sender,
             collection,
-            mintPriceAdjustmentFactor,
-            numWords
-        );
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_requests(
-        uint256 requestId
-    )
-        external
-        view
-        returns (
-            address minter,
-            address collection,
-            uint256 mintPriceAdjustmentFactor
-        )
-    {
-        RequestData storage request = Storage.layout().requests[requestId];
-
-        (minter, collection, mintPriceAdjustmentFactor) = (
-            request.minter,
-            request.collection,
-            request.mintPriceAdjustmentFactor
-        );
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_resolveMints(
-        address minter,
-        address collection,
-        uint256 mintPriceAdjustmentFactor,
-        uint256[] memory randomWords
-    ) external {
-        Storage.Layout storage l = Storage.layout();
-
-        CollectionData storage collectionData = l.collections[collection];
-
-        TiersData memory tiersData = l.tiers;
-
-        _resolveMints(
-            l.mintToken,
-            collectionData,
-            mintPriceAdjustmentFactor,
-            tiersData,
-            minter,
-            collection,
-            randomWords,
-            _ethToMintRatio(l)
+            referrer,
+            pricePerMint,
+            collectionFloorPrice,
+            uint8(numberOfMints),
+            THREE_WORDS
         );
     }
 
     /// @inheritdoc IPerpetualMintHarnessBlast
     function exposed_resolveMintsBlast(
-        address minter,
-        address collection,
-        uint256 mintPriceAdjustmentFactor,
+        RequestData calldata request,
         uint256[] memory randomWords
     ) external {
         Storage.Layout storage l = Storage.layout();
 
-        CollectionData storage collectionData = l.collections[collection];
+        CollectionData storage collectionData = l.collections[
+            request.collection
+        ];
 
         TiersData memory tiersData = l.tiers;
 
         _resolveMintsBlast(
             l.mintToken,
             collectionData,
-            mintPriceAdjustmentFactor,
+            request,
             tiersData,
-            minter,
-            collection,
-            randomWords,
-            _ethToMintRatio(l)
-        );
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function exposed_resolveMintsForMint(
-        address minter,
-        uint256 mintPriceAdjustmentFactor,
-        uint256[] memory randomWords
-    ) external {
-        Storage.Layout storage l = Storage.layout();
-
-        // for now, mints for $MINT are treated as address(0) collections
-        address collection = address(0);
-
-        CollectionData storage collectionData = l.collections[collection];
-
-        MintTokenTiersData memory mintTokenTiersData = l.mintTokenTiers;
-
-        _resolveMintsForMint(
-            l.mintToken,
-            _collectionMintMultiplier(collectionData),
-            _collectionMintPrice(collectionData),
-            mintPriceAdjustmentFactor,
-            mintTokenTiersData,
-            minter,
             randomWords,
             _ethToMintRatio(l)
         );
@@ -241,42 +135,37 @@ contract PerpetualMintHarnessSupraBlast is
         );
     }
 
-    /// @inheritdoc IPerpetualMintHarness
-    function mintReceipts(address collection, uint256 receiptAmount) external {
-        _safeMint(
-            msg.sender,
-            uint256(bytes32(abi.encode(collection))),
-            receiptAmount,
-            ""
+    /// @inheritdoc IPerpetualMintHarnessSupra
+    function exposed_requestRandomWordsSupra(
+        address minter,
+        address collection,
+        uint256 mintPriceAdjustmentFactor,
+        uint256 collectionFloorPrice,
+        uint8 numWords
+    ) external {
+        Storage.Layout storage l = Storage.layout();
+
+        CollectionData storage collectionData = l.collections[collection];
+
+        _requestRandomWordsSupra(
+            l,
+            collectionData,
+            minter,
+            collection,
+            mintPriceAdjustmentFactor,
+            collectionFloorPrice,
+            numWords
         );
     }
 
-    /// @inheritdoc IPerpetualMintHarness
-    function setConsolationFees(uint256 amount) external {
-        Storage.layout().consolationFees = amount;
+    function setBlastYieldRisk(uint32 risk) external onlyOwner {
+        _setBlastYieldRisk(risk);
     }
 
-    /// @inheritdoc IPerpetualMintHarness
-    function setMintEarnings(uint256 amount) external {
-        Storage.layout().mintEarnings = amount;
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function setProtocolFees(uint256 amount) external {
-        Storage.layout().protocolFees = amount;
-    }
-
-    /// @inheritdoc IPerpetualMintHarness
-    function setRequests(
+    function fulfillRandomWords(
         uint256 requestId,
-        address minter,
-        address collection,
-        uint256 mintPriceAdjustmentFactor
-    ) external {
-        Storage.layout().requests[requestId] = RequestData({
-            collection: collection,
-            minter: minter,
-            mintPriceAdjustmentFactor: mintPriceAdjustmentFactor
-        });
+        uint256[] memory randomWords
+    ) internal override(PerpetualMint, VRFConsumerBaseV2) {
+        _fulfillRandomWordsBlast(requestId, randomWords);
     }
 }

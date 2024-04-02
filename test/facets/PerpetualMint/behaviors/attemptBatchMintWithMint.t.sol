@@ -75,6 +75,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
 
@@ -150,6 +151,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
 
@@ -223,6 +225,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
 
@@ -297,6 +300,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
 
@@ -388,6 +392,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
 
@@ -451,6 +456,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             1 ether + 1, // 1 $MINT + 1 wei (dust)
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
     }
@@ -465,6 +471,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             1 ether - 1, // less than 1 $MINT
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
     }
@@ -483,6 +490,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             address(0),
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             ZERO_MINT_ATTEMPTS
         );
     }
@@ -499,6 +507,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             ZERO_MINT_ATTEMPTS
         );
     }
@@ -516,6 +525,7 @@ contract PerpetualMint_attemptBatchMintWithMint is
             COLLECTION,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
     }

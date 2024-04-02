@@ -11,7 +11,7 @@ import { IERC1155Metadata } from "@solidstate/contracts/token/ERC1155/metadata/I
 import { PerpetualMintHarnessSupraBlast } from "./PerpetualMintHarness.t.sol";
 import { IPerpetualMintHarnessBlast } from "../IPerpetualMintHarness.sol";
 import { IPerpetualMintHarness } from "../../IPerpetualMintHarness.sol";
-import { PerpetualMintHarnessSupra } from "../../Supra/PerpetualMintHarness.t.sol";
+import { IPerpetualMintHarnessSupra } from "../../Supra/IPerpetualMintHarness.sol";
 import { ICore } from "../../../../../contracts/diamonds/Core/ICore.sol";
 import { IPerpetualMintAdminBlast } from "../../../../../contracts/facets/PerpetualMint/Blast/IPerpetualMintAdmin.sol";
 import { IPerpetualMintViewBlast } from "../../../../../contracts/facets/PerpetualMint/Blast/IPerpetualMintView.sol";
@@ -443,7 +443,7 @@ contract PerpetualMintHelper_SupraBlast {
     {
         selectors = new bytes4[](1);
 
-        selectors[0] = PerpetualMintHarnessSupraBlast
+        selectors[0] = IPerpetualMintHarnessSupra
             .exposed_requestRandomWordsSupra
             .selector;
     }

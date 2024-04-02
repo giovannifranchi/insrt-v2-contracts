@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import { VRFConfig } from "../../../contracts/facets/PerpetualMint/Storage.sol";
+import { RequestData, VRFConfig } from "../../../contracts/facets/PerpetualMint/Storage.sol";
 
 /// @title IPerpetualMintHarness
 /// @dev Interface for PerpetualMintHarness contract
@@ -44,14 +44,6 @@ interface IPerpetualMintHarness {
         uint32 numWords
     ) external;
 
-    /// @dev exposes _requestRandomWordsSupra
-    function exposed_requestRandomWordsSupra(
-        address minter,
-        address collection,
-        uint256 mintPriceAdjustmentFactor,
-        uint8 numWords
-    ) external;
-
     /// @dev exposes requests
     function exposed_requests(
         uint256 requestId
@@ -69,6 +61,7 @@ interface IPerpetualMintHarness {
         address minter,
         address collection,
         uint256 mintPriceAdjustmentFactor,
+        uint256 collectionFloorPrice,
         uint256[] memory randomWords
     ) external;
 
@@ -79,8 +72,15 @@ interface IPerpetualMintHarness {
         uint256[] memory randomWords
     ) external;
 
-    /// @dev allows minting won collection receipts
+    /// @dev allows minting won collection receipts (legacy)
     function mintReceipts(address collection, uint256 receiptAmount) external;
+
+    /// @dev allows minting won collection receipts with floor prices
+    function mintReceipts(
+        address collection,
+        uint256 receiptAmount,
+        uint256 collectionFloorPrice
+    ) external;
 
     /// @dev allows setting accrued consolation fees
     function setConsolationFees(uint256 amount) external;
@@ -96,6 +96,7 @@ interface IPerpetualMintHarness {
         uint256 requestId,
         address minter,
         address collection,
-        uint256 mintPriceAdjustmentFactor
+        uint256 mintPriceAdjustmentFactor,
+        uint256 collectionFloorPrice
     ) external;
 }

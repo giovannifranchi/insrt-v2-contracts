@@ -36,7 +36,8 @@ contract PerpetualMint is IPerpetualMint, PerpetualMintInternal {
     function attemptBatchMintWithEth(
         address collection,
         address referrer,
-        uint32 numberOfMints
+        uint32 numberOfMints,
+        uint256 collectionFloorPrice
     ) external payable virtual whenNotPaused {
         _attemptBatchMintWithEth(
             msg.sender,
@@ -51,6 +52,7 @@ contract PerpetualMint is IPerpetualMint, PerpetualMintInternal {
         address collection,
         address referrer,
         uint256 pricePerMint,
+        uint256 collectionFloorPrice,
         uint32 numberOfMints
     ) external virtual whenNotPaused {
         _attemptBatchMintWithMint(
@@ -63,8 +65,12 @@ contract PerpetualMint is IPerpetualMint, PerpetualMintInternal {
     }
 
     /// @inheritdoc IPerpetualMint
-    function claimPrize(address prizeRecipient, uint256 tokenId) external {
-        _claimPrize(msg.sender, prizeRecipient, tokenId);
+    function claimPrize(
+        address prizeRecipient,
+        uint256 tokenId,
+        uint256 collectionFloorPrice
+    ) external {
+        _claimPrize(msg.sender, prizeRecipient, tokenId, collectionFloorPrice);
     }
 
     /// @inheritdoc IPerpetualMint

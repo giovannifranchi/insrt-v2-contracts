@@ -4,7 +4,7 @@ set -e
 CHAIN_ID=81457
 CONFIGURATION_SCRIPT="02_configureVRFSubscription.s.sol"
 RPC_URL=$BLAST_RPC_URL
-export ETH_FUND_AMOUNT=20 # 20 ETH
+export ETH_FUND_AMOUNT=0 # 20 ETH
 
 # Check if DEPLOYER_KEY is set
 if [[ -z $DEPLOYER_KEY ]]; then

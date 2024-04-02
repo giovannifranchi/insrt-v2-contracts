@@ -7,6 +7,7 @@ import { IERC1155BaseInternal } from "@solidstate/contracts/token/ERC1155/base/I
 import { PerpetualMintTest } from "../PerpetualMint.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { IPerpetualMintInternal } from "../../../../contracts/facets/PerpetualMint/IPerpetualMintInternal.sol";
+import { IERC1155MetadataExtensionInternal } from "../../../../contracts/facets/PerpetualMint/IERC1155MetadataExtensionInternal.sol";
 
 /// @title PerpetualMint_claimPrize
 /// @dev PerpetualMint test contract for testing expected claimPrize behavior. Tested on an Arbitrum fork.
@@ -25,8 +26,17 @@ contract PerpetualMint_claimPrize is
     function setUp() public override {
         super.setUp();
 
+        // legacy collection receipt mint
         vm.prank(minter);
         perpetualMint.mintReceipts(testCollection, 1);
+
+        // collection receipt mint with floor price
+        vm.prank(minter);
+        perpetualMint.mintReceipts(
+            testCollection,
+            1,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
     }
 
     /// @dev Tests claimPrize functionality.
@@ -42,7 +52,11 @@ contract PerpetualMint_claimPrize is
         );
 
         vm.prank(minter);
-        perpetualMint.claimPrize(minter, testTokenId);
+        perpetualMint.claimPrize(
+            minter,
+            testTokenId,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint256 postClaimClaimerReceiptBalance = perpetualMint.balanceOf(
             minter,
@@ -71,20 +85,31 @@ contract PerpetualMint_claimPrize is
         emit IPerpetualMintInternal.PrizeClaimed(
             minter,
             minter,
-            testCollection
+            testCollection,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
         );
 
         vm.prank(minter);
-        perpetualMint.claimPrize(minter, testTokenId);
+        perpetualMint.claimPrize(
+            minter,
+            testTokenId,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
     }
 
     /// @dev Tests claimPrize reverts when claimer balance is insufficient.
     function test_claimPrizeRevertsWhen_ClaimerBalanceInsufficient() external {
         vm.expectRevert(
-            IERC1155BaseInternal.ERC1155Base__TransferExceedsBalance.selector
+            IERC1155MetadataExtensionInternal
+                .NotEnoughTokenValuesFoundToUnset
+                .selector
         );
 
         vm.prank(minter);
-        perpetualMint.claimPrize(minter, ++testTokenId); // increment testTokenId to ensure balance is insufficient
+        perpetualMint.claimPrize(
+            minter,
+            ++testTokenId,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        ); // increment testTokenId to ensure balance is insufficient
     }
 }

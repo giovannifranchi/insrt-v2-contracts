@@ -38,6 +38,9 @@ abstract contract PerpetualMintTest is CoreTest {
     /// @dev test mint for collection floor price
     uint256 internal constant TEST_MINT_FOR_COLLECTION_FLOOR_PRICE = 69 ether;
 
+    /// @dev test mint for mint floor price (there is no floor price for mint for $MINT)
+    uint256 internal constant TEST_MINT_FOR_MINT_FLOOR_PRICE = 0;
+
     /// @dev mint for $MINT consolation fee basis points to test
     uint32 internal constant TEST_MINT_TOKEN_CONSOLATION_FEE_BP = 5e6; // 0.5% fee
 

@@ -55,6 +55,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
 
@@ -105,6 +106,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
 
@@ -156,6 +158,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
 
@@ -195,6 +198,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
 
@@ -216,6 +220,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
     }
@@ -232,6 +237,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
 
@@ -245,6 +251,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
     }
@@ -262,6 +269,7 @@ contract PerpetualMint_resolveMints is
             minter,
             COLLECTION,
             TEST_ADJUSTMENT_FACTOR,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             randomWords
         );
     }

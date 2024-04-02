@@ -12,12 +12,25 @@ abstract contract ERC1155MetadataExtension is
     IERC1155MetadataExtension
 {
     /// @inheritdoc IERC1155MetadataExtension
-    function name() external view virtual returns (string memory) {
-        return _name();
+    function getTokenValues(
+        address owner,
+        uint256 tokenId
+    ) external view virtual returns (uint256[] memory tokenValues) {
+        tokenValues = _getTokenValues(owner, tokenId);
     }
 
     /// @inheritdoc IERC1155MetadataExtension
-    function symbol() external view virtual returns (string memory) {
-        return _symbol();
+    function name() external view virtual returns (string memory tokenName) {
+        tokenName = _name();
+    }
+
+    /// @inheritdoc IERC1155MetadataExtension
+    function symbol()
+        external
+        view
+        virtual
+        returns (string memory tokenSymbol)
+    {
+        tokenSymbol = _symbol();
     }
 }

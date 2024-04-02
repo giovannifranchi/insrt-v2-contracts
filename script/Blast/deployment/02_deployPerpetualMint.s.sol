@@ -11,10 +11,10 @@ import { IERC1155Metadata } from "@solidstate/contracts/token/ERC1155/metadata/I
 import { ICore } from "../../../contracts/diamonds/Core/ICore.sol";
 import { IPerpetualMintAdminBlast } from "../../../contracts/facets/PerpetualMint/Blast/IPerpetualMintAdmin.sol";
 import { IPerpetualMintViewBlast } from "../../../contracts/facets/PerpetualMint/Blast/IPerpetualMintView.sol";
+import { PerpetualMintAdminBlast } from "../../../contracts/facets/PerpetualMint/Blast/PerpetualMintAdmin.sol";
 import { IPerpetualMintViewSupraBlast } from "../../../contracts/facets/PerpetualMint/Blast/Supra/IPerpetualMintView.sol";
 import { PerpetualMintSupraBlast } from "../../../contracts/facets/PerpetualMint/Blast/Supra/PerpetualMint.sol";
 import { PerpetualMintViewSupraBlast } from "../../../contracts/facets/PerpetualMint/Blast/Supra/PerpetualMintView.sol";
-import { PerpetualMintAdminBlast } from "../../../contracts/facets/PerpetualMint/Blast/PerpetualMintAdmin.sol";
 import { IERC1155MetadataExtension } from "../../../contracts/facets/PerpetualMint/IERC1155MetadataExtension.sol";
 import { IPerpetualMint } from "../../../contracts/facets/PerpetualMint/IPerpetualMint.sol";
 import { IPerpetualMintAdmin } from "../../../contracts/facets/PerpetualMint/IPerpetualMintAdmin.sol";
@@ -26,8 +26,9 @@ import { PerpetualMintView } from "../../../contracts/facets/PerpetualMint/Perpe
 import { PerpetualMintSupra } from "../../../contracts/facets/PerpetualMint/Supra/PerpetualMint.sol";
 
 /// @title DeployPerpetualMint_Blast
-/// @dev deploys the CoreBlast diamond contract, PerpetualMintSupraBlast facet, PerpetualMintBase facet, and PerpetualMintViewSupraBlast facet, and performs
-/// a diamondCut of the PerpetualMintSupraBlast, PerpetualMintBase, and PerpetualMintViewSupraBlast facets onto the CoreBlast diamond
+/// @dev deploys the CoreBlast diamond contract, PerpetualMintSupraBlast facet, PerpetualMintAdmin facet, PerpetualMintBase facet, and
+/// PerpetualMintViewSupraBlast facet, and performs a diamondCut of the PerpetualMintSupraBlast, PerpetualMintAdmin, PerpetualMintBase,
+/// and PerpetualMintViewSupraBlast facets onto the CoreBlast diamond
 /// NOTE: Blast Bounty not yet implemented for Insrt VRF functionality
 contract DeployPerpetualMint_Blast is Script {
     /// @dev runs the script logic
@@ -666,6 +667,7 @@ contract DeployPerpetualMint_Blast is Script {
 
         facetCuts = new ICore.FacetCut[](4);
 
+        // omit Ownable since SolidStateDiamond includes those
         facetCuts[0] = pausableFacetCut;
         facetCuts[1] = perpetualMintViewFacetCut;
         facetCuts[2] = perpetualMintViewBlastFacetCut;

@@ -74,6 +74,8 @@ struct RequestData {
     address minter;
     /// @dev adjustment factor based on the ratio of the price per mint paid to the full price per mint
     uint256 mintPriceAdjustmentFactor;
+    /// @dev collection floor price at the time of mint request
+    uint256 collectionFloorPrice;
 }
 
 /// @dev Represents data specific to $MINT mint for collection consolation tiers

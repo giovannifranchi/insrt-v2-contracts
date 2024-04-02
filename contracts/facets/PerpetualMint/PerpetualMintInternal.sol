@@ -53,6 +53,9 @@ abstract contract PerpetualMintInternal is
     /// @dev minimum price per spin, 1000 gwei = 0.000001 ETH / 1 $MINT
     uint256 internal constant MINIMUM_PRICE_PER_SPIN = 1000 gwei;
 
+    /// @dev collection floor price for mints for $MINT
+    uint256 private constant ZERO_COLLECTION_FLOOR_PRICE = 0;
+
     /// @dev address of the Blast precompile
     address private constant BLAST = 0x4300000000000000000000000000000000000002;
 
@@ -254,6 +257,7 @@ abstract contract PerpetualMintInternal is
             minter,
             collection,
             mintPriceAdjustmentFactor,
+            ZERO_COLLECTION_FLOOR_PRICE,
             numWords
         );
     }
@@ -417,6 +421,7 @@ abstract contract PerpetualMintInternal is
             minter,
             collection,
             mintPriceAdjustmentFactor,
+            ZERO_COLLECTION_FLOOR_PRICE,
             numWords
         );
     }
@@ -530,12 +535,14 @@ abstract contract PerpetualMintInternal is
     /// @param referrer address of referrer
     /// @param numberOfMints number of mints to attempt
     /// @param wordsPerMint number of random words per mint (2 for PerpetualMintSupra, 3 for PerpetualMintSupraBlast)
+    /// @param collectionFloorPrice floor price for the collection
     function _attemptBatchMintWithEthSupra(
         address minter,
         address collection,
         address referrer,
         uint8 numberOfMints,
-        uint8 wordsPerMint
+        uint8 wordsPerMint,
+        uint256 collectionFloorPrice
     ) internal {
         if (collection == address(0)) {
             // throw if collection is $MINT
@@ -582,6 +589,7 @@ abstract contract PerpetualMintInternal is
             minter,
             collection,
             mintPriceAdjustmentFactor,
+            collectionFloorPrice,
             numWords
         );
     }
@@ -702,6 +710,7 @@ abstract contract PerpetualMintInternal is
     /// @param collection address of collection for mint attempts
     /// @param referrer address of referrer
     /// @param pricePerMint price per mint for collection ($MINT denominated in units of wei)
+    /// @param collectionFloorPrice floor price for the collection
     /// @param numberOfMints number of mints to attempt
     /// @param wordsPerMint number of random words per mint (2 for PerpetualMintSupra, 3 for PerpetualMintSupraBlast)
     function _attemptBatchMintWithMintSupra(
@@ -709,6 +718,7 @@ abstract contract PerpetualMintInternal is
         address collection,
         address referrer,
         uint256 pricePerMint,
+        uint256 collectionFloorPrice,
         uint8 numberOfMints,
         uint8 wordsPerMint
     ) internal {
@@ -753,17 +763,17 @@ abstract contract PerpetualMintInternal is
         //    - For standard Supra: 2 word per mint (max 127 mints per transaction).
         uint8 numWords = numberOfMints * wordsPerMint;
 
-        uint256 mintPriceAdjustmentFactor = _attemptBatchMint_calculateMintPriceAdjustmentFactor(
-                collectionData,
-                pricePerSpinInWei
-            );
-
         _requestRandomWordsSupra(
             l,
             collectionData,
             minter,
             collection,
-            mintPriceAdjustmentFactor,
+            // returns the mint price adjustment factor
+            _attemptBatchMint_calculateMintPriceAdjustmentFactor(
+                collectionData,
+                pricePerSpinInWei
+            ),
+            collectionFloorPrice,
             numWords
         );
     }
@@ -832,6 +842,74 @@ abstract contract PerpetualMintInternal is
     /// @return value BASIS value
     function _BASIS() internal pure returns (uint32 value) {
         value = BASIS;
+    }
+
+    /// @notice overrides _beforeTokenTransfer hook to enforce token value data payload requirements
+    /// @param from address from which the tokens are transferred
+    /// @param to address to which the tokens are transferred
+    /// @param ids array of token ids
+    /// @param amounts array of token amounts
+    /// @param data data payload (expected to contain a uint256 array of token values)
+    function _beforeTokenTransfer(
+        address,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal virtual override {
+        if (data.length > 0) {
+            // decode the encoded token values from `data`
+            // this will revert if the data is not encoded as expected
+            uint256[] memory tokenValues = abi.decode(data, (uint256[]));
+
+            // Minting scenario: from address is the zero address
+            if (from == address(0)) {
+                for (uint256 i = 0; i < ids.length; ++i) {
+                    _setTokenValues(to, ids[i], amounts[i], tokenValues[i]);
+                }
+            }
+            // Burning scenario: to address is the zero address
+            else if (to == address(0)) {
+                for (uint256 i = 0; i < ids.length; ++i) {
+                    _unsetTokenValues(from, ids[i], amounts[i], tokenValues[i]);
+                }
+            }
+            // Transfer scenario: neither from nor to address is the zero address
+            else {
+                for (uint256 i = 0; i < ids.length; ++i) {
+                    _unsetTokenValues(from, ids[i], amounts[i], tokenValues[i]);
+                    _setTokenValues(to, ids[i], amounts[i], tokenValues[i]);
+                }
+            }
+        } else {
+            // Handle tokens without provided token values
+            for (uint256 i = 0; i < ids.length; ++i) {
+                uint256[] memory tokenValues = _getTokenValues(from, ids[i]);
+
+                // Check if tokens have values assigned and amounts match
+                if (tokenValues.length > 0) {
+                    require(
+                        tokenValues.length == amounts[i],
+                        "Token values missing for transfer/burn"
+                    );
+
+                    // If burning or transferring, we need to adjust or validate the operation
+                    if (to == address(0)) {
+                        // Burning tokens with values. Remove the token values.
+                        for (uint256 j = 0; j < amounts[i]; ++j) {
+                            _unsetTokenValues(from, ids[i], 1, tokenValues[j]);
+                        }
+                    } else {
+                        // Transferring tokens with values. Ensure the recipient also gets the values.
+                        for (uint256 j = 0; j < amounts[i]; ++j) {
+                            _unsetTokenValues(from, ids[i], 1, tokenValues[j]);
+                            _setTokenValues(to, ids[i], 1, tokenValues[j]);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /// @notice returns the current blast yield risk
@@ -1331,17 +1409,31 @@ abstract contract PerpetualMintInternal is
     /// @param claimer address of claimer
     /// @param prizeRecipient address of intended prize recipient
     /// @param tokenId token ID of prize, which is the prize collection address encoded as uint256
+    /// @param collectionFloorPrice floor price for the collection at the time of win
     function _claimPrize(
         address claimer,
         address prizeRecipient,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 collectionFloorPrice
     ) internal {
-        _safeTransfer(msg.sender, claimer, address(this), tokenId, 1, "");
+        uint256[] memory tokenValue = new uint256[](1);
+
+        tokenValue[0] = collectionFloorPrice;
+
+        _safeTransfer(
+            msg.sender,
+            claimer,
+            address(this),
+            tokenId,
+            1,
+            abi.encode(tokenValue)
+        );
 
         emit PrizeClaimed(
             claimer,
             prizeRecipient,
-            address(uint160(tokenId)) // decode tokenId to get collection address
+            address(uint160(tokenId)), // decode tokenId to get collection address
+            collectionFloorPrice
         );
     }
 
@@ -1515,7 +1607,8 @@ abstract contract PerpetualMintInternal is
                 minter,
                 collection,
                 randomWords,
-                _ethToMintRatio(l)
+                _ethToMintRatio(l),
+                request.collectionFloorPrice
             );
         }
 
@@ -1537,8 +1630,6 @@ abstract contract PerpetualMintInternal is
         RequestData storage request = l.requests[requestId];
 
         address collection = request.collection;
-        address minter = request.minter;
-        uint256 mintPriceAdjustmentFactor = request.mintPriceAdjustmentFactor;
 
         CollectionData storage collectionData = l.collections[collection];
 
@@ -1548,9 +1639,9 @@ abstract contract PerpetualMintInternal is
                 l.mintToken,
                 _collectionMintMultiplier(collectionData),
                 _collectionMintPrice(collectionData),
-                mintPriceAdjustmentFactor,
+                request.mintPriceAdjustmentFactor,
                 l.mintTokenTiers,
-                minter,
+                request.minter,
                 randomWords,
                 _ethToMintRatio(l)
             );
@@ -1559,10 +1650,8 @@ abstract contract PerpetualMintInternal is
             _resolveMintsBlast(
                 l.mintToken,
                 collectionData,
-                mintPriceAdjustmentFactor,
+                request,
                 l.tiers,
-                minter,
-                collection,
                 randomWords,
                 _ethToMintRatio(l)
             );
@@ -1727,6 +1816,7 @@ abstract contract PerpetualMintInternal is
     /// @param minter address calling this function
     /// @param collection address of collection to attempt mint for
     /// @param mintPriceAdjustmentFactor adjustment factor for mint price
+    /// @param collectionFloorPrice floor price for collection
     /// @param numWords amount of random values to request
     function _requestRandomWordsSupra(
         Storage.Layout storage l,
@@ -1734,6 +1824,7 @@ abstract contract PerpetualMintInternal is
         address minter,
         address collection,
         uint256 mintPriceAdjustmentFactor,
+        uint256 collectionFloorPrice,
         uint8 numWords
     ) internal {
         ISupraRouterContract supraRouter = ISupraRouterContract(VRF);
@@ -1747,11 +1838,12 @@ abstract contract PerpetualMintInternal is
 
         collectionData.pendingRequests.add(requestId);
 
-        RequestData storage request = l.requests[requestId];
-
-        request.collection = collection;
-        request.minter = minter;
-        request.mintPriceAdjustmentFactor = mintPriceAdjustmentFactor;
+        l.requests[requestId] = RequestData({
+            collection: collection,
+            minter: minter,
+            mintPriceAdjustmentFactor: mintPriceAdjustmentFactor,
+            collectionFloorPrice: collectionFloorPrice
+        });
     }
 
     /// @notice resolves the outcomes of attempted mints for a given collection
@@ -1763,6 +1855,7 @@ abstract contract PerpetualMintInternal is
     /// @param collection address of collection for mint attempts
     /// @param randomWords array of random values relating to number of attempts
     /// @param ethToMintRatio ratio of ETH to $MINT
+    /// @param collectionFloorPrice floor price for collection at time of mint
     function _resolveMints(
         address mintToken,
         CollectionData storage collectionData,
@@ -1771,7 +1864,8 @@ abstract contract PerpetualMintInternal is
         address minter,
         address collection,
         uint256[] memory randomWords,
-        uint256 ethToMintRatio
+        uint256 ethToMintRatio,
+        uint256 collectionFloorPrice
     ) internal {
         // ensure the number of random words is even
         // each valid mint attempt requires two random words
@@ -1835,11 +1929,17 @@ abstract contract PerpetualMintInternal is
         }
 
         if (totalReceiptAmount > 0) {
+            uint256[] memory tokenValues = new uint256[](totalReceiptAmount);
+
+            for (uint256 i = 0; i < totalReceiptAmount; ++i) {
+                tokenValues[i] = collectionFloorPrice;
+            }
+
             _safeMint(
                 minter,
                 uint256(bytes32(abi.encode(collection))), // encode collection address as tokenId
                 totalReceiptAmount,
-                ""
+                abi.encode(tokenValues)
             );
         }
 
@@ -1855,19 +1955,15 @@ abstract contract PerpetualMintInternal is
     /// @notice resolves the outcomes of attempted mints for a given collection on Blast
     /// @param mintToken address of $MINT token
     /// @param collectionData the CollectionData struct for a given collection
-    /// @param mintPriceAdjustmentFactor adjustment factor for mint price
+    /// @param request the RequestData struct for the mint request
     /// @param tiersData the TiersData struct for mint consolations
-    /// @param minter address of minter
-    /// @param collection address of collection for mint attempts
     /// @param randomWords array of random values relating to number of attempts
     /// @param ethToMintRatio ratio of ETH to $MINT
     function _resolveMintsBlast(
         address mintToken,
         CollectionData storage collectionData,
-        uint256 mintPriceAdjustmentFactor,
+        RequestData memory request,
         TiersData memory tiersData,
-        address minter,
-        address collection,
         uint256[] memory randomWords,
         uint256 ethToMintRatio
     ) internal {
@@ -1879,15 +1975,12 @@ abstract contract PerpetualMintInternal is
 
         uint32 blastYieldRisk = _blastYieldRisk();
 
-        uint256 collectionMintMultiplier = _collectionMintMultiplier(
-            collectionData
-        );
-
         uint256 collectionMintPrice = _collectionMintPrice(collectionData);
 
-        // adjust the collection risk by the mint price adjustment factor
-        uint256 collectionRisk = (_collectionRisk(collectionData) *
-            mintPriceAdjustmentFactor) / BASIS;
+        // determine the collection risk by adjusting the collection mint price by the mint price adjustment factor
+        // and dividing by the collection floor price
+        uint256 collectionRisk = (collectionMintPrice *
+            request.mintPriceAdjustmentFactor) / request.collectionFloorPrice;
 
         uint256 cumulativeTierMultiplier;
         uint256 totalBlastYieldAmount;
@@ -1926,7 +2019,7 @@ abstract contract PerpetualMintInternal is
 
             totalBlastYieldAmount += _processBlastYieldOutcome(
                 thirdNormalizedValue,
-                minter,
+                request.minter,
                 blastYieldRisk,
                 totalBlastYieldAmount
             );
@@ -1941,25 +2034,31 @@ abstract contract PerpetualMintInternal is
                 (cumulativeTierMultiplier *
                     ethToMintRatio *
                     collectionMintPrice *
-                    collectionMintMultiplier *
-                    mintPriceAdjustmentFactor) /
+                    _collectionMintMultiplier(collectionData) *
+                    request.mintPriceAdjustmentFactor) /
                 (uint256(BASIS) * BASIS * BASIS);
 
-            IToken(mintToken).mint(minter, totalMintAmount);
+            IToken(mintToken).mint(request.minter, totalMintAmount);
         }
 
         if (totalReceiptAmount > 0) {
+            uint256[] memory tokenValues = new uint256[](totalReceiptAmount);
+
+            for (uint256 i = 0; i < totalReceiptAmount; ++i) {
+                tokenValues[i] = request.collectionFloorPrice;
+            }
+
             _safeMint(
-                minter,
-                uint256(bytes32(abi.encode(collection))), // encode collection address as tokenId
+                request.minter,
+                uint256(bytes32(abi.encode(request.collection))), // encode collection address as tokenId
                 totalReceiptAmount,
-                ""
+                abi.encode(tokenValues)
             );
         }
 
         emit MintResultBlast(
-            minter,
-            collection,
+            request.minter,
+            request.collection,
             randomWords.length / 3,
             totalBlastYieldAmount,
             totalMintAmount,

@@ -65,7 +65,12 @@ contract PerpetualMint_fulfillRandomWordsSupraBlast is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * TEST_MINT_ATTEMPTS
-        }(MINT_FOR_COLLECTION_ADDRESS, NO_REFERRER, TEST_MINT_ATTEMPTS);
+        }(
+            MINT_FOR_COLLECTION_ADDRESS,
+            NO_REFERRER,
+            TEST_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         // calculate and store the mint fulfillment block number using the configured vrf min # of confirmations
         uint256 mintFulfillmentBlockNumber = mintBlockNumber +
@@ -189,6 +194,7 @@ contract PerpetualMint_fulfillRandomWordsSupraBlast is
             MINT_FOR_COLLECTION_ADDRESS,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             TEST_MINT_ATTEMPTS
         );
 
@@ -319,13 +325,23 @@ contract PerpetualMint_fulfillRandomWordsSupraBlast is
         vm.prank(minter);
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * MAXIMUM_MINT_ATTEMPTS
-        }(MINT_FOR_COLLECTION_ADDRESS, NO_REFERRER, MAXIMUM_MINT_ATTEMPTS);
+        }(
+            MINT_FOR_COLLECTION_ADDRESS,
+            NO_REFERRER,
+            MAXIMUM_MINT_ATTEMPTS,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         vm.expectRevert();
 
         perpetualMint.attemptBatchMintWithEth{
             value: MINT_PRICE * (MAXIMUM_MINT_ATTEMPTS + 1)
-        }(MINT_FOR_COLLECTION_ADDRESS, NO_REFERRER, MAXIMUM_MINT_ATTEMPTS + 1);
+        }(
+            MINT_FOR_COLLECTION_ADDRESS,
+            NO_REFERRER,
+            MAXIMUM_MINT_ATTEMPTS + 1,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE
+        );
 
         uint8 numberOfRandomWordsRequested = uint8(MAXIMUM_MINT_ATTEMPTS * 3); // 3 words per mint for collection attempt on Blast
 
@@ -447,6 +463,7 @@ contract PerpetualMint_fulfillRandomWordsSupraBlast is
             MINT_FOR_COLLECTION_ADDRESS,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             MAXIMUM_MINT_ATTEMPTS
         );
 
@@ -457,6 +474,7 @@ contract PerpetualMint_fulfillRandomWordsSupraBlast is
             MINT_FOR_COLLECTION_ADDRESS,
             NO_REFERRER,
             MINT_PRICE * currentEthToMintRatio,
+            TEST_MINT_FOR_COLLECTION_FLOOR_PRICE,
             MAXIMUM_MINT_ATTEMPTS + 1
         );
 
