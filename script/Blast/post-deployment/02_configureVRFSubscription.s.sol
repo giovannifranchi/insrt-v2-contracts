@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity 0.8.19;
 
-import "forge-safe/BatchScript.sol";
 
+import { Script, console2 } from "forge-std/Script.sol";
+import { IMultiSigWallet } from "../../common/post-deployment/IMultiSigWallet.sol";
 import { IPerpetualMint } from "../../../contracts/facets/PerpetualMint/IPerpetualMint.sol";
 import { IDepositContract } from "../../../contracts/vrf/Supra/IDepositContract.sol";
 import { ISupraRouterContract } from "../../../contracts/vrf/Supra/ISupraRouterContract.sol";
@@ -10,11 +11,14 @@ import { ISupraRouterContract } from "../../../contracts/vrf/Supra/ISupraRouterC
 /// @title ConfigureVRFSubscription_Blast
 /// @dev Configures the Supra VRF subscription by adding the PerpetualMint contract as a consumer,
 /// and optionally funding the subscription in ETH via the Gnosis Safe Transaction Service API
-contract ConfigureVRFSubscription_Blast is BatchScript {
+contract ConfigureVRFSubscription_Blast is Script {  
     /// @dev runs the script logic
     function run() external {
         // get PerpetualMint address
         address payable perpetualMint = readCoreBlastAddress();
+
+        // get signer PK
+        uint256 signerPK = vm.envUint("SIGNER_PK");
 
         // get Gnosis Safe (protocol owner) address
         address gnosisSafeAddress = vm.envAddress("GNOSIS_SAFE");
@@ -36,21 +40,30 @@ contract ConfigureVRFSubscription_Blast is BatchScript {
             perpetualMint
         );
 
-        addToBatch(supraVRFDepositContract, addContractToWhitelistTx);
+        vm.startBroadcast(signerPK);
+
+        uint256 contractWhitelistTxId = IMultiSigWallet(gnosisSafeAddress)
+            .submitTransaction(
+            supraVRFDepositContract,
+            0,
+            addContractToWhitelistTx
+        );
+
+        uint256 depositFundClientTxId;
 
         if (ethAmountToFundSubscription > 0) {
             bytes memory depositFundClientTx = abi.encodeWithSelector(
                 IDepositContract.depositFundClient.selector
             );
-
-            addToBatch(
+            depositFundClientTxId = IMultiSigWallet(gnosisSafeAddress)
+                .submitTransaction(
                 supraVRFDepositContract,
                 ethAmountToFundSubscription,
                 depositFundClientTx
             );
         }
 
-        executeBatch(gnosisSafeAddress, true);
+        vm.stopBroadcast();
 
         console2.log("Supra VRF Router Address: ", vrfRouter);
         console2.log("Supra VRF Consumer Added: ", perpetualMint);
@@ -59,6 +72,10 @@ contract ConfigureVRFSubscription_Blast is BatchScript {
             envEthAmountToFundSubscription,
             ethAmountToFundSubscription % 1e18
         );
+        console2.log("Contract Whitelist Transaction ID: %s", contractWhitelistTxId);
+        if(ethAmountToFundSubscription > 0) {
+            console2.log("Deposit Fund Client Transaction ID: %s", depositFundClientTxId);
+        }
     }
 
     /// @notice attempts to read the saved address of the CoreBlast diamond contract, post-deployment
