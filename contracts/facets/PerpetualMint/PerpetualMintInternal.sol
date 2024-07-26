@@ -355,10 +355,6 @@ abstract contract PerpetualMintInternal is
         // Calculate the total number of random words required for the Supra VRF request.
         // Constraints:
         // 1. numWords = 0 results in a revert.
-        // 2. Supra VRF limit: The maximum number of words allowed per request is 255.
-        // If the number of words requested exceeds this limit, the function call will revert.
-        //    - For Blast Supra: 3 words per mint (max 85 mints per transaction).
-        //    - For standard Supra: 2 word per mint (max 127 mints per transaction).
 
         for (
             uint256 i = 0;
@@ -647,10 +643,6 @@ abstract contract PerpetualMintInternal is
         // Calculate the total number of random words required for the Supra VRF request.
         // Constraints:
         // 1. numWords = 0 results in a revert.
-        // 2. Supra VRF limit: The maximum number of words allowed per request is 255.
-        // If the number of words requested exceeds this limit, the function call will revert.
-        //    - For Blast Supra: 3 words per mint (max 85 mints per transaction).
-        //    - For standard Supra: 2 word per mint (max 127 mints per transaction).
 
         for (
             uint256 i = 0;
@@ -1342,10 +1334,6 @@ abstract contract PerpetualMintInternal is
         // Calculate the total number of random words required for the Supra VRF request.
         // Constraints:
         // 1. numWords = 0 results in a revert.
-        // 2. Supra VRF limit: The maximum number of words allowed per request is 255.
-        // If the number of words requested exceeds this limit, the function call will revert.
-        //    - For Blast Supra: 3 words per mint (max 85 mints per transaction).
-        //    - For standard Supra: 2 word per mint (max 127 mints per transaction).
 
         uint256 mintPriceAdjustmentFactor = _attemptBatchMint_calculateMintPriceAdjustmentFactor(
                 collectionData,
