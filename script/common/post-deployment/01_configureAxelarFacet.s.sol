@@ -9,6 +9,8 @@ import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 import { IDiamondWritableInternal } from "@solidstate/contracts/proxy/diamond/writable/IDiamondWritableInternal.sol";
 import { Script, console } from "forge-std/Script.sol";
 
+import { IToken } from "../../../contracts/facets/Token/IToken.sol";
+
 /// @title ConfigureAxelarFacet
 /// @dev deploys the AxelarBridge facet and cuts it onto the TokenProxy diamond
 contract ConfigureAxelarFacet is Script {
@@ -37,6 +39,10 @@ contract ConfigureAxelarFacet is Script {
             axelarBridgeFacetCuts,
             address(0),
             ""
+        );
+
+        IToken(tokenProxyAddress).addMintingContract(
+            address(tokenProxyAddress)
         );
 
         vm.stopBroadcast();

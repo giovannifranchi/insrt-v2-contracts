@@ -79,6 +79,8 @@ contract DeployToken is Script {
             tokenProxy.diamondCut(axelarBridgeFacetCut, address(0), "");
         }
 
+        IToken(address(tokenProxy)).addMintingContract(address(tokenProxy));
+
         vm.stopBroadcast();
     }
 
