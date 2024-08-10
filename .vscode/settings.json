@@ -1,10 +1,12 @@
 {
   "[solidity]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "JuanBlanco.solidity"
   },
   "editor.formatOnSave": true,
   "makefile.extensionOutputFolder": "./cache",
-  "prettier.documentSelectors": ["**/*.sol"],
+  "prettier.documentSelectors": [
+    "**/*.sol"
+  ],
   "search.exclude": {
     "lib": true
   },

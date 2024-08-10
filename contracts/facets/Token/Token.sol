@@ -12,6 +12,13 @@ import { AccrualData } from "./types/DataTypes.sol";
 /// @title Token
 /// @dev contains all externally called functions and necessary override for the Token facet contract
 contract Token is TokenInternal, SolidStateERC20, IToken {
+    error Token__OnlySelf();
+
+    modifier onlySelf() {
+        if (msg.sender != address(this)) revert Token__OnlySelf();
+        _;
+    }
+
     /// @inheritdoc IToken
     function accrualData(
         address account
@@ -57,6 +64,11 @@ contract Token is TokenInternal, SolidStateERC20, IToken {
     /// @inheritdoc IToken
     function claim() external {
         _claim(msg.sender);
+    }
+
+    /// @inheritdoc IToken
+    function claimFor(address account) external onlySelf {
+        _claim(account);
     }
 
     /// @inheritdoc IToken

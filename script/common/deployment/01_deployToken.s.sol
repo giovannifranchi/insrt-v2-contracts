@@ -12,6 +12,9 @@ import { ITokenProxy } from "../../../contracts/diamonds/Token/ITokenProxy.sol";
 import { TokenProxy } from "../../../contracts/diamonds/Token/TokenProxy.sol";
 import { IToken } from "../../../contracts/facets/Token/IToken.sol";
 import { Token } from "../../../contracts/facets/Token/Token.sol";
+import { AxelarBridge } from "../../../contracts/facets/AxelarBridge/AxelarBridge.sol";
+import { IAxelarBridge } from "../../../contracts/facets/AxelarBridge/IAxelarBridge.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title DeployToken
 /// @dev deploys the TokenProxy diamond contract and the Token facet, and performs
@@ -22,6 +25,8 @@ contract DeployToken is Script {
         //NOTE: CHANGE AS NEEDED FOR PRODUCTION
         string memory name = "MINT";
         string memory symbol = "$MINT";
+        address gateway = vm.envAddress("GATEWAYWAY_ADDRESS");
+        address gasService = vm.envAddress("GAS_SERVICE_ADDRESS");
 
         // read deployer private key
         uint256 deployerPrivateKey = vm.envUint("DEPLOYER_KEY");
@@ -30,6 +35,22 @@ contract DeployToken is Script {
 
         // deploy Token facet
         Token tokenFacet = new Token();
+
+        uint256 canDeployAxelarBridgeFacet = vm.envUint(
+            "CAN_DEPLOY_AXELAR_BRIDGE_FACET"
+        );
+
+        AxelarBridge axelarBridgeFacet;
+
+        if (canDeployAxelarBridgeFacet == 1) {
+            // deploy AxelarBridge facet
+            axelarBridgeFacet = new AxelarBridge(gateway, gasService);
+
+            console.log(
+                "AxelarBridge Facet Address: ",
+                address(axelarBridgeFacet)
+            );
+        }
 
         // deploy TokenProxy
         TokenProxy tokenProxy = new TokenProxy(name, symbol);
@@ -46,6 +67,17 @@ contract DeployToken is Script {
 
         // cut Token into TokenProxy
         tokenProxy.diamondCut(facetCuts, address(0), "");
+
+        if (canDeployAxelarBridgeFacet == 1) {
+            // get AxelarBridge facet cut
+            ITokenProxy.FacetCut[]
+                memory axelarBridgeFacetCut = getAxelarBridgeFacetCuts(
+                    address(axelarBridgeFacet)
+                );
+
+            // cut AxelarBridge into TokenProxy
+            tokenProxy.diamondCut(axelarBridgeFacetCut, address(0), "");
+        }
 
         vm.stopBroadcast();
     }
@@ -88,7 +120,7 @@ contract DeployToken is Script {
             });
 
         // map the Token function selectors to their respective interfaces
-        bytes4[] memory tokenFunctionSelectors = new bytes4[](18);
+        bytes4[] memory tokenFunctionSelectors = new bytes4[](19);
 
         tokenFunctionSelectors[0] = IToken.accrualData.selector;
 
@@ -126,6 +158,8 @@ contract DeployToken is Script {
 
         tokenFunctionSelectors[17] = IToken.setDistributionFractionBP.selector;
 
+        tokenFunctionSelectors[18] = IToken.claimFor.selector;
+
         ITokenProxy.FacetCut memory tokenFacetCut = IDiamondWritableInternal
             .FacetCut({
                 target: address(facetAddress),
@@ -134,10 +168,45 @@ contract DeployToken is Script {
             });
 
         ITokenProxy.FacetCut[] memory facetCuts = new ITokenProxy.FacetCut[](2);
-
         facetCuts[0] = erc20FacetCut;
         facetCuts[1] = tokenFacetCut;
 
+        return facetCuts;
+    }
+
+    /// @dev provides the facet cuts for cutting AxelarBridge facet into TokenProxy
+    /// @param facetAddress address of AxelarBridge facet
+    function getAxelarBridgeFacetCuts(
+        address facetAddress
+    ) internal pure returns (ITokenProxy.FacetCut[] memory) {
+        // map the AxelarBridge function selectors to their respective interfaces
+        bytes4[] memory axelarBridgeFunctionSelectors = new bytes4[](7);
+
+        axelarBridgeFunctionSelectors[0] = IAxelarBridge.bridgeToken.selector;
+        axelarBridgeFunctionSelectors[1] = IAxelarBridge
+            .enableSupportedChains
+            .selector;
+        axelarBridgeFunctionSelectors[2] = IAxelarBridge
+            .disableSupportedChains
+            .selector;
+        axelarBridgeFunctionSelectors[3] = IAxelarBridge
+            .supportedChains
+            .selector;
+        axelarBridgeFunctionSelectors[4] = IAxelarExecutable.execute.selector;
+        axelarBridgeFunctionSelectors[5] = IAxelarExecutable
+            .executeWithToken
+            .selector;
+        axelarBridgeFunctionSelectors[6] = IAxelarExecutable.gateway.selector;
+
+        ITokenProxy.FacetCut
+            memory axelarBridgeFacetCut = IDiamondWritableInternal.FacetCut({
+                target: address(facetAddress),
+                action: IDiamondWritableInternal.FacetCutAction.ADD,
+                selectors: axelarBridgeFunctionSelectors
+            });
+
+        ITokenProxy.FacetCut[] memory facetCuts = new ITokenProxy.FacetCut[](1);
+        facetCuts[0] = axelarBridgeFacetCut;
         return facetCuts;
     }
 

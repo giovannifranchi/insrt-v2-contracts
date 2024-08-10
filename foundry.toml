@@ -2,7 +2,7 @@
 [profile.default]
 evm_version = "shanghai"
 ffi = false
-fs_permissions = [{ access = "read-write", path = "./"}]
+fs_permissions = [{ access = "read-write", path = "./" }]
 fuzz_runs = 256
 no_match_contract = "Base$"
 optimizer = true
@@ -10,6 +10,7 @@ optimizer_runs = 1_000_000
 remappings = [
   "@chainlink=lib/chainlink/contracts/src/v0.8/",
   "@solidstate/contracts/=lib/solidstate-solidity/contracts/",
+  "@axelar/=lib/axelar-gmp-sdk-solidity/contracts/",
   "forge-safe/=lib/forge-safe/src/",
   "forge-std/=lib/forge-std/src/",
 ]

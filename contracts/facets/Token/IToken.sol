@@ -36,6 +36,9 @@ interface IToken is ISolidStateERC20 {
     /// @notice claims all claimable tokens for the msg.sender
     function claim() external;
 
+    /// @notice claims accrued tokens for a given account, can be called only by the contract itself
+    function claimFor(address account) external;
+
     /// @notice returns all claimable tokens of a given account
     /// @param account address of account
     /// @return amount amount of claimable tokens
