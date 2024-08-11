@@ -26,6 +26,8 @@ interface IAxelarBridge is IAxelarExecutable {
     /// @notice it is thown when the balance is insufficient
     error AxelarBridge__InsufficientBalance();
 
+    error AxelarBridge__NotEnoughGas();
+
     /// @notice it is emitted when the chain is enabled
     event SupportedChainsEnabled(
         string indexed destinationChain,

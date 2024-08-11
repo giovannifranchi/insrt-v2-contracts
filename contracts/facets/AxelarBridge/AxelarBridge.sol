@@ -27,6 +27,10 @@ contract AxelarBridge is
     AxelarExecutable,
     OwnableInternal
 {
+    /// @notice Minimum gas required to execute a transaction through Axelar Gateway
+    uint256 public constant MIN_GAS_PER_TX = 0.001 ether;
+
+    /// @notice Axelar Gas Service contract in charge of handling gas disposal on other chains
     IAxelarGasService public immutable gasService;
 
     modifier onlySupportedChains(string calldata _destinationChain) {
@@ -81,6 +85,7 @@ contract AxelarBridge is
         uint256 _amount
     ) external payable onlySupportedChains(_destinationChain) {
         if (_amount == 0) revert AxelarBridge__NoZeroAmount();
+        if (msg.value < MIN_GAS_PER_TX) revert AxelarBridge__NotEnoughGas();
 
         uint256 totalBalance = _calculateUserTotalBalance(msg.sender);
         if (

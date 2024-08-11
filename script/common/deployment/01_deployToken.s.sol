@@ -58,7 +58,7 @@ contract DeployToken is Script {
         console.log("Token Facet Address: ", address(tokenFacet));
         console.log("Token Proxy Address: ", address(tokenProxy));
 
-        writeTokenProxyAddress(address(tokenProxy));
+        // writeTokenProxyAddress(address(tokenProxy));
 
         // get Token facet cuts
         ITokenProxy.FacetCut[] memory facetCuts = getTokenFacetCuts(
