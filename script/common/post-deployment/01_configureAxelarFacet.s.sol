@@ -41,10 +41,6 @@ contract ConfigureAxelarFacet is Script {
             ""
         );
 
-        IToken(tokenProxyAddress).addMintingContract(
-            address(tokenProxyAddress)
-        );
-
         vm.stopBroadcast();
     }
 

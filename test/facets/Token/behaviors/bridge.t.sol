@@ -43,16 +43,21 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         uint256 indexed amount
     );
 
+    /// @dev AxelarGatway selector for approving contract calls in events
     bytes32 internal constant SELECTOR_APPROVE_CONTRACT_CALL =
         keccak256("approveContractCall");
 
+    /// @dev an example of a supported chain
     string public supportedChain = "ethereum";
+    /// @dev an example of a destination address, it is a random address
     string public destinationAddress =
-        "0x6513Aedb4D1593BA12e50644401D976aebDc90d8"; // it is a random one
+        "0x6513Aedb4D1593BA12e50644401D976aebDc90d8";
     address public ALICE = makeAddr("Alice");
     address public OWNER = makeAddr("Owner");
     uint256 public ALICE_BALANCE = 100 ether;
+    /// @dev it Alice balance after claiming
     uint256 public actualAliceBalance;
+    /// @dev address of the token proxy contract
     address public tokenAddress;
 
     function setUp() public virtual override {
