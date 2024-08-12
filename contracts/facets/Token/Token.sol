@@ -13,6 +13,7 @@ import { AccrualData } from "./types/DataTypes.sol";
 /// @dev contains all externally called functions and necessary override for the Token facet contract
 contract Token is TokenInternal, SolidStateERC20, IToken {
     error Token__OnlySelf();
+    error Token__NoZeroAmount();
 
     modifier onlySelf() {
         if (msg.sender != address(this)) revert Token__OnlySelf();
@@ -149,6 +150,7 @@ contract Token is TokenInternal, SolidStateERC20, IToken {
     function setDistributionFractionBP(
         uint32 _distributionFractionBP
     ) external onlyOwner {
+        if (_distributionFractionBP == 0) revert Token__NoZeroAmount();
         _setDistributionFractionBP(_distributionFractionBP);
     }
 }
