@@ -200,6 +200,11 @@ abstract contract TokenInternal is
     function _mint(uint256 amount, address account) internal {
         Storage.Layout storage l = Storage.layout();
 
+        // It reverts if distributionFractionBP is not set otherwise it will fall into a modulo error
+        if (l.distributionFractionBP == 0) {
+            revert DistributionFractionBPNotSet();
+        }
+
         // calculate amount for distribution
         uint256 distributionAmount = (amount * l.distributionFractionBP) /
             BASIS;
