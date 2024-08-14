@@ -36,7 +36,7 @@ interface ITokenBridgeInternal {
     event SupportedChainsDisabled(string indexed destinationChain);
 
     /// @notice it is emitted when the token has started its bridge from the source chain
-    event ToeknBridgeInitilised(
+    event TokenBridgeInitialised(
         string indexed destinationChain,
         string indexed destinationAddress,
         uint256 indexed amount

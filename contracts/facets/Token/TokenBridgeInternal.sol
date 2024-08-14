@@ -161,7 +161,7 @@ abstract contract TokenBridgeInternal is
         // Call the contract on the destination chain
         gateway.callContract(destinationChain, contractAddress, payload);
 
-        emit ToeknBridgeInitilised(
+        emit TokenBridgeInitialised(
             destinationChain,
             contractAddress,
             amountToBurn
