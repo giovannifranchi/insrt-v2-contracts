@@ -44,7 +44,7 @@ contract TokenHelper {
                 selectors: erc20FunctionSelectors
             });
 
-        bytes4[] memory tokenFunctionSelectors = new bytes4[](19);
+        bytes4[] memory tokenFunctionSelectors = new bytes4[](18);
 
         tokenFunctionSelectors[0] = IToken.accrualData.selector;
 
@@ -81,8 +81,6 @@ contract TokenHelper {
         tokenFunctionSelectors[16] = IToken.SCALE.selector;
 
         tokenFunctionSelectors[17] = IToken.setDistributionFractionBP.selector;
-
-        tokenFunctionSelectors[18] = IToken.claimFor.selector;
 
         ISolidStateDiamond.FacetCut
             memory tokenFacetCut = IDiamondWritableInternal.FacetCut({

@@ -323,6 +323,9 @@ abstract contract TokenInternal is
     function _setDistributionFractionBP(
         uint32 distributionFractionBP
     ) internal {
+        if (distributionFractionBP == 0)
+            revert DistributionFractionBPCannotBeZero();
+
         _enforceBasis(distributionFractionBP, BASIS);
 
         Storage.layout().distributionFractionBP = distributionFractionBP;

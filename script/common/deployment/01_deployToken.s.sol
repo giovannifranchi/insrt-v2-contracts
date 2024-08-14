@@ -122,7 +122,7 @@ contract DeployToken is Script {
             });
 
         // map the Token function selectors to their respective interfaces
-        bytes4[] memory tokenFunctionSelectors = new bytes4[](19);
+        bytes4[] memory tokenFunctionSelectors = new bytes4[](18);
 
         tokenFunctionSelectors[0] = IToken.accrualData.selector;
 
@@ -159,8 +159,6 @@ contract DeployToken is Script {
         tokenFunctionSelectors[16] = IToken.SCALE.selector;
 
         tokenFunctionSelectors[17] = IToken.setDistributionFractionBP.selector;
-
-        tokenFunctionSelectors[18] = IToken.claimFor.selector;
 
         ITokenProxy.FacetCut memory tokenFacetCut = IDiamondWritableInternal
             .FacetCut({

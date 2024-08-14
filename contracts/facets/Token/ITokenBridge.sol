@@ -8,50 +8,6 @@ import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 /// @notice it is the interface for the Token Bridge
 /// @dev it contains all the external functions of the TokenBridge
 interface ITokenBridge is IAxelarExecutable {
-    /// @notice it is thown when the chain is not supported
-    error TokenBridge__UnsupportedChain();
-
-    /// @notice it is thown when the chain is invalid
-    error TokenBridge__InvalidChain();
-
-    /// @notice it is thown when the address is invalid
-    error TokenBridge__InvalidAddress();
-
-    /// @notice it is thown when the chain is not yet supported
-    error TokenBridge__NotYetSupportedChain();
-
-    /// @notice it is thown when the amount is zero
-    error TokenBridge__NoZeroAmount();
-
-    /// @notice it is thown when the balance is insufficient
-    error TokenBridge__InsufficientBalance();
-
-    error TokenBridge__NotEnoughGas();
-
-    /// @notice it is emitted when the chain is enabled
-    event SupportedChainsEnabled(
-        string indexed destinationChain,
-        string indexed destinationAddress
-    );
-
-    /// @notice it is emitted when the chain is disabled
-    event SupportedChainsDisabled(string indexed destinationChain);
-
-    /// @notice it is emitted when the token has started its bridge from the source chain
-    event ToeknBridgeInitilised(
-        string indexed destinationChain,
-        string indexed destinationAddress,
-        uint256 indexed amount
-    );
-
-    /// @notice it is emitted when the token has finalized its bridge to the destination chain
-    event TokenBridgeFinalized(
-        string indexed destinationChain,
-        string destinationAddress,
-        uint256 indexed amount,
-        address indexed receiver
-    );
-
     /// @notice it enables to add a supported chain
     /// @param destinationChain the destination chain (right format needs to be picked from https://docs.axelar.dev/dev/reference/mainnet-contract-addresses)
     /// @param destinationAddress the destination address of the specular deployed contract
