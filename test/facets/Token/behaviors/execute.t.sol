@@ -5,6 +5,7 @@ pragma solidity 0.8.19;
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { MockGateway } from "@axelar/test/mocks/MockGateway.sol";
+import { console } from "forge-std/Test.sol";
 
 /// @title Execute
 /// @notice This contract tests the functionalities of the execute function
@@ -66,8 +67,12 @@ contract Execute is TokenBridge {
             payload
         );
         vm.stopPrank();
+        // uint256 amountExpected = (10 ether * token.distributionFractionBP()) /
+        //     10 ether;
 
         assert(token.balanceOf(ALICE) > 0);
+
+        console.log("ALICE balance: ", token.balanceOf(ALICE));
     }
 
     /// @notice It is a utility function to enable supported chains
@@ -82,13 +87,20 @@ contract Execute is TokenBridge {
     /// @notice It is a utility function to approve contract calls an bypass the original signature functionality
     function _approveContractCall() internal {
         vm.startPrank(AXELAR_RELAYER);
+
         bytes memory payload = abi.encode(10 ether, ALICE);
         bytes32 payloadHash = keccak256(payload);
-        axelarGateway.validateContractCall(
-            SELECTOR_APPROVE_CONTRACT_CALL,
+        bytes memory params = abi.encode(
             supportedChain,
             destinationAddress,
-            payloadHash
+            tokenAddress,
+            payloadHash,
+            keccak256("sourceTxHash"),
+            1
+        );
+        axelarGateway.approveContractCall(
+            params,
+            SELECTOR_APPROVE_CONTRACT_CALL
         );
     }
 }

@@ -6,13 +6,9 @@ import { IAxelarGateway } from "@axelar/interfaces/IAxelarGateway.sol";
 
 import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
 
-import { TokenStorage as Storage } from "./Storage.sol";
-
 import { ITokenBridge } from "./ITokenBridge.sol";
 
 import { TokenBridgeInternal } from "./TokenBridgeInternal.sol";
-
-import { IToken } from "./IToken.sol";
 
 /// @title TokenBridge
 /// @notice it is the main contract for the Token Bridge
