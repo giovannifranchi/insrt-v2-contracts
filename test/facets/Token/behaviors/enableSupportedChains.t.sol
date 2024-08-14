@@ -39,7 +39,7 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if the owner can enable a new chain
-    function test_OwnerCanSetNewChains() public {
+    function test_ownerCanSetNewChains() public {
         _enableChain(OWNER);
 
         vm.assertEq(
@@ -50,7 +50,7 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if an event is emitted when a new chain is enabled
-    function test_EnablingChainShouldEmitEvent() public {
+    function test_enablingChainShouldEmitEvent() public {
         vm.expectEmit(true, true, false, false);
         emit SupportedChainsEnabled(supportedChain, destinationAddress);
 
@@ -59,14 +59,14 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if only the owner can enable a new chain
-    function test_OnlyOwnerCanEnableChain() public {
+    function test_onlyOwnerCanEnableChain() public {
         vm.expectRevert(Ownable__NotOwner.selector);
         _enableChain(ALICE);
     }
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty chain should not be supported
-    function test_EnablingEmptyChainShouldNotBeSupported() public {
+    function test_enablingEmptyChainShouldNotBeSupported() public {
         vm.expectRevert(TokenBridge__InvalidChain.selector);
 
         vm.startPrank(OWNER);
@@ -78,7 +78,7 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty address should not be supported
-    function test_EnablingChainWithEmptyAddressShouldNotBeSupported() public {
+    function test_enablingChainWithEmptyAddressShouldNotBeSupported() public {
         vm.expectRevert(TokenBridge__InvalidAddress.selector);
 
         vm.startPrank(OWNER);

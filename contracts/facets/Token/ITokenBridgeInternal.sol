@@ -24,7 +24,11 @@ interface ITokenBridgeInternal {
     /// @notice it is thown when the balance is insufficient
     error TokenBridge__InsufficientBalance();
 
+    /// @notice it is thown when the gas is insufficient
     error TokenBridge__NotEnoughGas();
+
+    /// @notice it is thown when the source address is not the one that matches the supported chain
+    error TokenBridge__NotCorrectSourceAddress();
 
     /// @notice it is emitted when the chain is enabled
     event SupportedChainsEnabled(

@@ -15,7 +15,7 @@ import { TokenBridgeInternal } from "./TokenBridgeInternal.sol";
 /// @dev it contains all the external functions of TokenBridge
 contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
     modifier onlySupportedChains(string calldata destinationChain) {
-        if (!_isDestinationChainSuppoerted(destinationChain))
+        if (!_isDestinationChainSupported(destinationChain))
             revert TokenBridge__UnsupportedChain();
         _;
     }

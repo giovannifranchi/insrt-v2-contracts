@@ -23,7 +23,7 @@ library TokenStorage {
         EnumerableSet.AddressSet mintingContracts;
         /// @notice it stores the supported chains, the key is the destination chain and the value is the destination address
         /// @dev it uses strings to store addresses in order to support EVM and non-EVM chain address types, it is an Axelar standard
-        mapping(string => string) supportedChains;
+        mapping(string supportedChain => string targetAddress) supportedChains;
     }
 
     bytes32 internal constant STORAGE_SLOT =

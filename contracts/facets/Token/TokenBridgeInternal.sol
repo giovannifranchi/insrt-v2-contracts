@@ -51,7 +51,7 @@ abstract contract TokenBridgeInternal is
     /// @notice it check if the destination chain is supported
     /// @param destinationChain the destination chain
     /// @return true if the destination chain is supported
-    function _isDestinationChainSuppoerted(
+    function _isDestinationChainSupported(
         string calldata destinationChain
     ) internal view returns (bool) {
         return
@@ -111,7 +111,7 @@ abstract contract TokenBridgeInternal is
     function _disableSupportedChains(
         string calldata destinationChain
     ) internal {
-        if (!_isDestinationChainSuppoerted(destinationChain))
+        if (!_isDestinationChainSupported(destinationChain))
             revert TokenBridge__NotYetSupportedChain();
         delete Storage.layout().supportedChains[destinationChain];
         emit SupportedChainsDisabled(destinationChain);
@@ -168,16 +168,33 @@ abstract contract TokenBridgeInternal is
         );
     }
 
+    /// @notice it hashes a string
+    /// @param str the string to hash
+    /// @return the hash of the string
+    /// @dev it is an utility function used to enable string comparison
+    function _hashString(string memory str) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked(str));
+    }
+
     /// @inheritdoc AxelarExecutable
     function _execute(
         string calldata sourceChain,
         string calldata sourceAddress,
         bytes calldata payload
     ) internal override {
+        // store it in memory to call _hashString()
+        string memory _sourceAddress = sourceAddress;
+
+        if (
+            _hashString(_supportedChains(sourceChain)) !=
+            _hashString(_sourceAddress)
+        ) revert TokenBridge__NotCorrectSourceAddress();
+
         (uint256 amount, address receiver) = abi.decode(
             payload,
             (uint256, address)
         );
+
         _claim(receiver);
         _mint(amount, receiver);
         emit TokenBridgeFinalized(sourceChain, sourceAddress, amount, receiver);

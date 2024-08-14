@@ -34,7 +34,7 @@ contract DisableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if the owner can disable a chain
-    function test_OwnerCanDisableChain() public {
+    function test_ownerCanDisableChain() public {
         _enableChain(OWNER);
 
         ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
@@ -47,7 +47,7 @@ contract DisableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if an event is emitted when a chain is disabled
-    function test_DisablingChainShouldEmitEvent() public {
+    function test_disablingChainShouldEmitEvent() public {
         vm.startPrank(OWNER);
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
@@ -62,7 +62,7 @@ contract DisableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if only the owner can disable a chain
-    function test_OnlyOwnerCanDisableChain() public {
+    function test_onlyOwnerCanDisableChain() public {
         _enableChain(OWNER);
 
         vm.expectRevert(Ownable__NotOwner.selector);
@@ -73,7 +73,7 @@ contract DisableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if disabling a not enabled chain is supported
-    function test_DisablingNonExistentChainShouldNotBeSupported() public {
+    function test_disablingNonExistentChainShouldNotBeSupported() public {
         vm.expectRevert(TokenBridge__NotYetSupportedChain.selector);
         vm.startPrank(OWNER);
         ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);

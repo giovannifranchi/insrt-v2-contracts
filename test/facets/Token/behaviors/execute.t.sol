@@ -5,12 +5,12 @@ pragma solidity 0.8.19;
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { MockGateway } from "@axelar/test/mocks/MockGateway.sol";
-import { console } from "forge-std/Test.sol";
 
 /// @title Execute
 /// @notice This contract tests the functionalities of the execute function
 contract Execute is TokenBridge {
     error NotApprovedByGateway();
+    error TokenBridge__NotCorrectSourceAddress();
 
     /// @dev an example of a supported chain
     string public supportedChain = "ethereum";
@@ -25,6 +25,10 @@ contract Execute is TokenBridge {
     address public axelarGasService = makeAddr("AxelarGasService");
     bytes32 internal constant SELECTOR_APPROVE_CONTRACT_CALL =
         keccak256("approveContractCall");
+    uint256 public constant AMOUNT_TO_MINT = 10 ether;
+    /// @dev it is a random address used to check if the system is resilient to exploits made with unsupported addresses
+    string public exploiterAddress =
+        "0x8643Aedb4D1593BA12e50644401D976aebDc90e8";
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -41,7 +45,7 @@ contract Execute is TokenBridge {
     function test_executeCannotBeCalledIfGatewayHasNotApprovedTheCall() public {
         _enableChain(OWNER);
 
-        bytes memory payload = abi.encode(10 ether, ALICE);
+        bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
 
         vm.expectRevert(NotApprovedByGateway.selector);
 
@@ -59,7 +63,7 @@ contract Execute is TokenBridge {
         _approveContractCall();
 
         vm.startPrank(AXELAR_RELAYER);
-        bytes memory payload = abi.encode(10 ether, ALICE);
+        bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
         ITokenBridge(tokenAddress).execute(
             SELECTOR_APPROVE_CONTRACT_CALL,
             supportedChain,
@@ -67,12 +71,27 @@ contract Execute is TokenBridge {
             payload
         );
         vm.stopPrank();
-        // uint256 amountExpected = (10 ether * token.distributionFractionBP()) /
-        //     10 ether;
 
-        assert(token.balanceOf(ALICE) > 0);
+        uint256 amountForFees = (AMOUNT_TO_MINT *
+            token.distributionFractionBP()) / token.BASIS();
+        vm.assertEq(token.balanceOf(ALICE), AMOUNT_TO_MINT - amountForFees);
+    }
 
-        console.log("ALICE balance: ", token.balanceOf(ALICE));
+    function test_callMadeFromUnsupportedAddressReverts() public {
+        _enableChain(OWNER);
+        _approveContractCallWithUnsupportedAddress();
+
+        vm.startPrank(AXELAR_RELAYER);
+        bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
+        vm.expectRevert(TokenBridge__NotCorrectSourceAddress.selector);
+
+        ITokenBridge(tokenAddress).execute(
+            SELECTOR_APPROVE_CONTRACT_CALL,
+            supportedChain,
+            exploiterAddress,
+            payload
+        );
+        vm.stopPrank();
     }
 
     /// @notice It is a utility function to enable supported chains
@@ -88,11 +107,30 @@ contract Execute is TokenBridge {
     function _approveContractCall() internal {
         vm.startPrank(AXELAR_RELAYER);
 
-        bytes memory payload = abi.encode(10 ether, ALICE);
+        bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
         bytes32 payloadHash = keccak256(payload);
         bytes memory params = abi.encode(
             supportedChain,
             destinationAddress,
+            tokenAddress,
+            payloadHash,
+            keccak256("sourceTxHash"),
+            1
+        );
+        axelarGateway.approveContractCall(
+            params,
+            SELECTOR_APPROVE_CONTRACT_CALL
+        );
+    }
+    /// @notice It is a utility function to approve contract calls made from unsupported addresses
+    function _approveContractCallWithUnsupportedAddress() internal {
+        vm.startPrank(AXELAR_RELAYER);
+
+        bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
+        bytes32 payloadHash = keccak256(payload);
+        bytes memory params = abi.encode(
+            supportedChain,
+            exploiterAddress,
             tokenAddress,
             payloadHash,
             keccak256("sourceTxHash"),

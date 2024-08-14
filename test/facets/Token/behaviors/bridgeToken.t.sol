@@ -69,7 +69,7 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the onlySupportedChains modifier
     /// @dev It tests if bridging on an unsupported chain should not be supported
-    function test_BridgingOnUnsupportedChainShouldNotBeSupported() public {
+    function test_bridgingOnUnsupportedChainShouldNotBeSupported() public {
         vm.expectRevert(TokenBridge__UnsupportedChain.selector);
 
         vm.startPrank(ALICE);
