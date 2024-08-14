@@ -2,24 +2,24 @@
 
 pragma solidity 0.8.19;
 
-import { TokenWithBridge } from "../TokenWithBridge.t.sol";
+import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
-import { IAxelarBridge } from "../../../../contracts/facets/AxelarBridge/IAxelarBridge.sol";
+import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 
 /// @title TestBridge
 /// @notice This contract tests the functionalities of the Axelar Bridge
 /// @dev It inherits from the TokenWithBridge contract and the ArbForkTest contract
 /// @dev For chaging fork it is sufficient to twick the ForkTest inheritance
-contract TestBridge is ArbForkTest, TokenWithBridge {
+contract TestBridge is ArbForkTest, TokenBridge {
     error Ownable__NotOwner();
-    error AxelarBridge__InvalidChain();
-    error AxelarBridge__InvalidAddress();
-    error AxelarBridge__NotYetSupportedChain();
-    error AxelarBridge__UnsupportedChain();
-    error AxelarBridge__NoZeroAmount();
-    error AxelarBridge__InsufficientBalance();
+    error TokenBridge__InvalidChain();
+    error TokenBridge__InvalidAddress();
+    error TokenBridge__NotYetSupportedChain();
+    error TokenBridge__UnsupportedChain();
+    error TokenBridge__NoZeroAmount();
+    error TokenBridge__InsufficientBalance();
     error NotApprovedByGateway();
-    error AxelarBridge__NotEnoughGas();
+    error TokenBridge__NotEnoughGas();
 
     event SupportedChainsEnabled(
         string indexed destinationChain,
@@ -63,10 +63,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     function setUp() public virtual override {
         vm.startPrank(OWNER);
         super.setUp();
-        initTokenWithBridge(
-            ARBITRUM_AXELAR_GATEWAY,
-            ARBITRUM_AXELAR_GAS_SERVICE
-        );
+        initTokenBridge(ARBITRUM_AXELAR_GATEWAY, ARBITRUM_AXELAR_GAS_SERVICE);
         tokenAddress = address(token);
         token.addMintingContract(address(token));
         vm.stopPrank();
@@ -88,7 +85,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         _enableChain(OWNER);
 
         vm.assertEq(
-            IAxelarBridge(tokenAddress).supportedChains(supportedChain),
+            ITokenBridge(tokenAddress).supportedChains(supportedChain),
             destinationAddress
         );
     }
@@ -107,10 +104,10 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     function test_OwnerCanDisableChain() public {
         _enableChain(OWNER);
 
-        IAxelarBridge(tokenAddress).disableSupportedChains(supportedChain);
+        ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
 
         vm.assertEq(
-            IAxelarBridge(tokenAddress).supportedChains(supportedChain),
+            ITokenBridge(tokenAddress).supportedChains(supportedChain),
             ""
         );
     }
@@ -119,7 +116,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     /// @dev It tests if an event is emitted when a chain is disabled
     function test_DisablingChainShouldEmitEvent() public {
         vm.startPrank(OWNER);
-        IAxelarBridge(tokenAddress).enableSupportedChains(
+        ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress
         );
@@ -127,7 +124,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         vm.expectEmit(false, false, false, true);
         emit SupportedChainsDisabled(supportedChain);
 
-        IAxelarBridge(tokenAddress).disableSupportedChains(supportedChain);
+        ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
     }
 
     /// @notice This function is used to test the enableSupportedChains function
@@ -145,16 +142,16 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         vm.expectRevert(Ownable__NotOwner.selector);
 
         vm.startPrank(ALICE);
-        IAxelarBridge(tokenAddress).disableSupportedChains(supportedChain);
+        ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
     }
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty chain should not be supported
     function test_EnablingEmptyChainShouldNotBeSupported() public {
-        vm.expectRevert(AxelarBridge__InvalidChain.selector);
+        vm.expectRevert(TokenBridge__InvalidChain.selector);
 
         vm.startPrank(OWNER);
-        IAxelarBridge(tokenAddress).enableSupportedChains(
+        ITokenBridge(tokenAddress).enableSupportedChains(
             "",
             destinationAddress
         );
@@ -163,18 +160,18 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if disabling a not enabled chain is supported
     function test_DisablingNonExistentChainShouldNotBeSupported() public {
-        vm.expectRevert(AxelarBridge__NotYetSupportedChain.selector);
+        vm.expectRevert(TokenBridge__NotYetSupportedChain.selector);
         vm.startPrank(OWNER);
-        IAxelarBridge(tokenAddress).disableSupportedChains(supportedChain);
+        ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
     }
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty address should not be supported
     function test_EnablingChainWithEmptyAddressShouldNotBeSupported() public {
-        vm.expectRevert(AxelarBridge__InvalidAddress.selector);
+        vm.expectRevert(TokenBridge__InvalidAddress.selector);
 
         vm.startPrank(OWNER);
-        IAxelarBridge(tokenAddress).enableSupportedChains(supportedChain, "");
+        ITokenBridge(tokenAddress).enableSupportedChains(supportedChain, "");
     }
 
     /// @notice This function is used to test the supportedChains function
@@ -183,7 +180,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         _enableChain(OWNER);
 
         vm.assertEq(
-            IAxelarBridge(tokenAddress).supportedChains(supportedChain),
+            ITokenBridge(tokenAddress).supportedChains(supportedChain),
             destinationAddress
         );
     }
@@ -191,10 +188,10 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     /// @notice This function is used to test the onlySupportedChains modifier
     /// @dev It tests if bridging on an unsupported chain should not be supported
     function test_BridgingOnUnsupportedChainShouldNotBeSupported() public {
-        vm.expectRevert(AxelarBridge__UnsupportedChain.selector);
+        vm.expectRevert(TokenBridge__UnsupportedChain.selector);
 
         vm.startPrank(ALICE);
-        IAxelarBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             10 ether
         );
@@ -205,10 +202,10 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     function test_BridgingWithZeroAmountShouldNotBeSupported() public {
         _enableChain(OWNER);
 
-        vm.expectRevert(AxelarBridge__NoZeroAmount.selector);
+        vm.expectRevert(TokenBridge__NoZeroAmount.selector);
 
         vm.startPrank(ALICE);
-        IAxelarBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             0
         );
@@ -221,9 +218,9 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
 
         vm.startPrank(ALICE);
 
-        vm.expectRevert(AxelarBridge__InsufficientBalance.selector);
+        vm.expectRevert(TokenBridge__InsufficientBalance.selector);
 
-        IAxelarBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             actualAliceBalance + 10
         );
@@ -235,7 +232,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         _enableChain(OWNER);
 
         vm.startPrank(ALICE);
-        IAxelarBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             type(uint256).max
         );
@@ -249,7 +246,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         _enableChain(OWNER);
 
         vm.startPrank(ALICE);
-        IAxelarBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             10 ether
         );
@@ -272,7 +269,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
             keccak256(abi.encode(10 ether, ALICE)),
             abi.encode(10 ether, ALICE)
         );
-        IAxelarBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             10 ether
         );
@@ -290,7 +287,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
             destinationAddress,
             10 ether
         );
-        IAxelarBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             10 ether
         );
@@ -302,10 +299,10 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     function test_BridgeCannotHappenIfMinNativeAmountIsNotPayed() public {
         _enableChain(OWNER);
 
-        vm.expectRevert(AxelarBridge__NotEnoughGas.selector);
+        vm.expectRevert(TokenBridge__NotEnoughGas.selector);
 
         vm.startPrank(ALICE);
-        IAxelarBridge(tokenAddress).bridgeToken(supportedChain, 10 ether);
+        ITokenBridge(tokenAddress).bridgeToken(supportedChain, 10 ether);
     }
 
     /// @notice This function is used to test the execute function
@@ -319,7 +316,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
         vm.expectRevert(NotApprovedByGateway.selector);
 
         vm.startPrank(ALICE);
-        IAxelarBridge(tokenAddress).execute(
+        ITokenBridge(tokenAddress).execute(
             SELECTOR_APPROVE_CONTRACT_CALL,
             supportedChain,
             destinationAddress,
@@ -330,7 +327,7 @@ contract TestBridge is ArbForkTest, TokenWithBridge {
     /// @notice It is a utility function to enable supported chains
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
-        IAxelarBridge(tokenAddress).enableSupportedChains(
+        ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress
         );

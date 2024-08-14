@@ -148,9 +148,9 @@ contract Token is TokenInternal, SolidStateERC20, IToken {
 
     /// @inheritdoc IToken
     function setDistributionFractionBP(
-        uint32 _distributionFractionBP
+        uint32 distributionFractionBP
     ) external onlyOwner {
-        if (_distributionFractionBP == 0) revert Token__NoZeroAmount();
-        _setDistributionFractionBP(_distributionFractionBP);
+        if (distributionFractionBP == 0) revert Token__NoZeroAmount();
+        _setDistributionFractionBP(distributionFractionBP);
     }
 }
