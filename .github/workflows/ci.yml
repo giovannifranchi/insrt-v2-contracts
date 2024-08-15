@@ -15,7 +15,7 @@ jobs:
 
     name: CI
     runs-on: ubuntu-latest
-    env: # Add your secrets here
+    env:
       ARBITRUM_RPC_URL: ${{ secrets.ARBITRUM_RPC_URL }}
       BASE_RPC_URL: ${{ secrets.BASE_RPC_URL }}
       BLAST_RPC_URL: ${{ secrets.BLAST_RPC_URL }}
@@ -29,13 +29,6 @@ jobs:
         uses: foundry-rs/foundry-toolchain@v1
         with:
           version: nightly
-
-      - name: Debug environment variables
-        run: |
-          echo "ARBITRUM_RPC_URL: $ARBITRUM_RPC_URL"
-          echo "BASE_RPC_URL: $BASE_RPC_URL"
-          echo "BLAST_RPC_URL: $BLAST_RPC_URL"
-        id: debug
 
       - name: Run Forge build
         run: |
