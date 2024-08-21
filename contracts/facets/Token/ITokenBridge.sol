@@ -38,8 +38,8 @@ interface ITokenBridge is IAxelarExecutable {
 
     /// @notice it returns the destination address of a supported chain
     /// @param destinationChain the destination chain
-    /// @return the destination address
+    /// @return destinationAddress
     function supportedChains(
         string calldata destinationChain
-    ) external view returns (string memory);
+    ) external view returns (string memory destinationAddress);
 }

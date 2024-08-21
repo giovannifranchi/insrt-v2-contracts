@@ -32,43 +32,43 @@ abstract contract TokenBridgeInternal is
 
     /// @notice it checks if the destination chain is a valid input
     /// @param destinationChain the destination chain
-    /// @return true if the destination chain is valid
+    /// @return isDestinationChainValid
     function _isDestinationChainValid(
         string calldata destinationChain
-    ) internal pure returns (bool) {
-        return bytes(destinationChain).length != 0;
+    ) internal pure returns (bool isDestinationChainValid) {
+        return isDestinationChainValid = bytes(destinationChain).length != 0;
     }
 
     /// @notice it checks if the destination address is a valid input
     /// @param destinationAddress the destination address
-    /// @return true if the destination address is valid
+    /// @return isDestinationAddressValid
     function _isDestinationAddressValid(
         string calldata destinationAddress
-    ) internal pure returns (bool) {
-        return bytes(destinationAddress).length != 0;
+    ) internal pure returns (bool isDestinationAddressValid) {
+        return isDestinationAddressValid = bytes(destinationAddress).length != 0;
     }
 
     /// @notice it checks if the destination chain is supported
     /// @param destinationChain the destination chain
-    /// @return true if the destination chain is supported
+    /// @return isDestinationChainSupported
     function _isDestinationChainSupported(
         string calldata destinationChain
-    ) internal view returns (bool) {
+    ) internal view returns (bool isDestinationChainSupported) {
         return
-            bytes(Storage.layout().supportedChains[destinationChain]).length !=
+            isDestinationChainSupported = bytes(Storage.layout().supportedChains[destinationChain]).length !=
             0;
     }
 
     /// @notice it calculates the total balance of a user
     /// @param user the user address
     /// @dev it uses the balanceOf and claimableTokens functions of the token
-    /// @return the total balance of the user which means its balance plus its accruals
+    /// @return totalBalance
     function _calculateUserTotalBalance(
         address user
-    ) internal view returns (uint256) {
+    ) internal view returns (uint256 totalBalance) {
         uint256 currentBalance = _balanceOf(user);
         uint256 currentAccruals = _claimableTokens(user);
-        return currentBalance + currentAccruals;
+        return totalBalance = currentBalance + currentAccruals;
     }
 
     /// @notice it claims and burns tokens
@@ -83,12 +83,12 @@ abstract contract TokenBridgeInternal is
     /// @param amount the amount to burn
     /// @param totalBalance the total balance of the user
     /// @dev if the amount is set to type(uint256).max, it returns the total balance
-    /// @return the amount to burn
+    /// @return amountToBurn
     function _calculateAmountToBurn(
         uint256 amount,
         uint256 totalBalance
-    ) internal pure returns (uint256) {
-        return amount == type(uint256).max ? totalBalance : amount;
+    ) internal pure returns (uint256 amountToBurn) {
+        return amountToBurn = amount == type(uint256).max ? totalBalance : amount;
     }
 
     /// @notice it enables a supported chain
@@ -121,8 +121,8 @@ abstract contract TokenBridgeInternal is
     /// @param destinationChain the destination chain
     function _supportedChains(
         string calldata destinationChain
-    ) internal view returns (string memory) {
-        return Storage.layout().supportedChains[destinationChain];
+    ) internal view returns (string memory destinationAddress) {
+        return destinationAddress = Storage.layout().supportedChains[destinationChain];
     }
 
     /// @notice it bridges a token from the source chain to the destination chain
@@ -170,10 +170,10 @@ abstract contract TokenBridgeInternal is
 
     /// @notice it hashes a string
     /// @param str the string to hash
-    /// @return the hash of the string
+    /// @return hashedString
     /// @dev it is an utility function used to enable string comparison
-    function _hashString(string memory str) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked(str));
+    function _hashString(string memory str) internal pure returns (bytes32 hashedString) {
+        return hashedString = keccak256(abi.encodePacked(str));
     }
 
     /// @inheritdoc AxelarExecutable
