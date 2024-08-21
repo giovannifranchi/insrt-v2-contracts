@@ -30,7 +30,7 @@ abstract contract TokenBridgeInternal is
         axelarGasService = IAxelarGasService(gasService);
     }
 
-    /// @notice it check if the destination chain is a valid input
+    /// @notice it checks if the destination chain is a valid input
     /// @param destinationChain the destination chain
     /// @return true if the destination chain is valid
     function _isDestinationChainValid(
