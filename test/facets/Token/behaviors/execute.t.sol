@@ -44,9 +44,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
     /// @dev It checks wether the transaction has been approved by the AxelarGateway
     /// @dev Any address can call the execute function but the call will only be executed if the gateway has approved it
     /// @dev There is not a single defined address for Axelar relayers
-    function test_execute_executeCannotBeCalledIfGatewayHasNotApprovedTheCall()
-        public
-    {
+    function test_execute_shouldRevert_ifGatewayHasNotApprovedTheCall() public {
         _enableChain(OWNER);
 
         bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
@@ -61,7 +59,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
             payload
         );
     }
-
+    /// @notice This function is used to test the execute function proper execution
     function test_execute_receiveContractCallAndExecute() public {
         _enableChain(OWNER);
         _approveContractCall();
@@ -81,7 +79,10 @@ contract Token_execute is TokenBridge, ArbForkTest {
         vm.assertEq(token.balanceOf(ALICE), AMOUNT_TO_MINT - amountForFees);
     }
 
-    function test_execute_callMadeFromUnsupportedAddressReverts() public {
+    /// @notice This function is testing whether an approved call from axelar can be executed even tough the address from the source chain is not supported
+    function test_execute_shouldRevert_whenCallIsMadeFromUnsupportedAddresses()
+        public
+    {
         _enableChain(OWNER);
         _approveContractCallWithUnsupportedAddress();
 

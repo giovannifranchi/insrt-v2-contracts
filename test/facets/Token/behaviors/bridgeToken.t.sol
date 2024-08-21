@@ -69,7 +69,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the onlySupportedChains modifier
     /// @dev It tests if bridging on an unsupported chain should not be supported
-    function test_bridgeToken_bridgingOnUnsupportedChainShouldNotBeSupported()
+    function test_bridgeToken_shouldRevert_whenBridgingOnUnsupportedChain()
         public
     {
         vm.expectRevert(
@@ -85,9 +85,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the bridgeToken function
     /// @dev It tests if bridging with zero amount should not be supported
-    function test_bridgeToken_bridgingWithZeroAmountShouldNotBeSupported()
-        public
-    {
+    function test_bridgeToken_shouldRevert_whenBridgingWithZeroAmount() public {
         _enableChain(OWNER);
 
         vm.expectRevert(
@@ -103,7 +101,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the bridgeToken function
     /// @dev It tests if bridging more than the balance should not be supported
-    function test_bridgeToken_bridgingMoreThanBalanceShouldNotBeSupported()
+    function test_bridgeToken_shouldRevert_whenBridgingMoreThanBalance()
         public
     {
         _enableChain(OWNER);
@@ -122,7 +120,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the bridgeToken function
     /// @dev It tests if bridging with uint max transfers all the balance
-    function test_bridgeToken_bridgingWithUintMaxShouldTransferAllBalance()
+    function test_bridgeToken_bridgingWithUintMax_shouldTransferAllBalance()
         public
     {
         _enableChain(OWNER);
@@ -153,7 +151,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     /// @notice This function is used to test the bridgeToken function
     /// @dev It tests if the AxelarGateway event is emitted properly
     /// @dev It is the most important part since that event allows the bridging service to start
-    function test_bridgeToken_bridgingShouldEmitAnAxelarEvent() public {
+    function test_bridgeToken_emitsContractCallEvent() public {
         _enableChain(OWNER);
 
         vm.startPrank(ALICE);
@@ -173,7 +171,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the bridgeToken function
     /// @dev It check if an internal event is emitted when initiating the bridge
-    function test_bridgeToken_bridgingShouldEmitAnInternalEvent() public {
+    function test_bridgeToken_emitsTokenBridgeInitialisedEvent() public {
         _enableChain(OWNER);
 
         vm.startPrank(ALICE);
@@ -192,7 +190,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     /// @notice This function is used to test the bridgeToken function
     /// @dev It checks if the min amount of msg.value is sent with the transaction in order to fullfill AxelarGasService requirements
     /// @dev If the complete operation costs less than the value sent the value in excess gets refunded
-    function test_bridgeToken_bridgeCannotHappenIfMinNativeAmountIsNotPayed()
+    function test_bridgeToken_shouldRevert_ifMinNativeAmountIsNotPayed()
         public
     {
         _enableChain(OWNER);

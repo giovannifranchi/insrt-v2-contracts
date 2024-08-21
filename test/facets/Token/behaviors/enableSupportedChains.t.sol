@@ -37,7 +37,7 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if the owner can enable a new chain
-    function test_enableSupportedChains_ownerCanSetNewChains() public {
+    function test_enableSupportedChains_ownerCanEnableNewChains() public {
         _enableChain(OWNER);
 
         vm.assertEq(
@@ -48,7 +48,9 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if an event is emitted when a new chain is enabled
-    function test_enableSupportedChains_enablingChainShouldEmitEvent() public {
+    function test_enableSupportedChains_emitsSupportedChainsEnabledEvent()
+        public
+    {
         vm.expectEmit(true, true, false, false);
         emit SupportedChainsEnabled(supportedChain, destinationAddress);
 
@@ -57,14 +59,16 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if only the owner can enable a new chain
-    function test_enableSupportedChains_onlyOwnerCanEnableChain() public {
+    function test_enableSupportedChains_shouldRevert_ifNotOwnerAttemptsToEnableChains()
+        public
+    {
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
         _enableChain(ALICE);
     }
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty chain should not be supported
-    function test_enableSupportedChains_enablingEmptyChainShouldNotBeSupported()
+    function test_enableSupportedChains_shouldRevert_whenEnablingEmptyChains()
         public
     {
         vm.expectRevert(
@@ -80,7 +84,7 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty address should not be supported
-    function test_enableSupportedChains_enablingChainWithEmptyAddressShouldNotBeSupported()
+    function test_enableSupportedChains_shouldRevert_whenEnablingChainWithEmptyAddress()
         public
     {
         vm.expectRevert(
