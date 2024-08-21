@@ -130,7 +130,6 @@ abstract contract TokenBridgeInternal is
     /// @param destinationChain the destination chain
     /// @param amount the amount of token to bridge
     /// @dev it emits a TokenBridgeInitialised event
-    /// @dev it is payable because it needs to receive native tokens for gas functionalities
     function _bridgeToken(
         string calldata destinationChain,
         uint256 amount
