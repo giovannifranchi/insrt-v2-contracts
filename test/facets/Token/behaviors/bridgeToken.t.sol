@@ -9,7 +9,7 @@ import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.so
 /// @title TestBridgeToken
 /// @notice This contract tests the functionalities of the bridgeToken function
 /// @dev It inherits from the TokenWithBridge contract and the ArbForkTest contract
-/// @dev For chaging fork it is sufficient to twick the ForkTest inheritance
+/// @dev For changing fork it is sufficient to change the ForkTest inheritance
 contract TestBridgeToken is ArbForkTest, TokenBridge {
     error TokenBridge__UnsupportedChain();
     error TokenBridge__NoZeroAmount();
