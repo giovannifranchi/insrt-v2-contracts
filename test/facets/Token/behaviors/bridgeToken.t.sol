@@ -56,15 +56,31 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
         token.addMintingContract(address(token));
         vm.stopPrank();
 
+        assert(
+            _assertContractIsPresent(token.mintingContracts(), tokenAddress)
+        );
+
         vm.startPrank(MINTER);
         token.mint(ALICE, ALICE_BALANCE);
         vm.stopPrank();
+
+        uint256 amountInFees = (ALICE_BALANCE * DISTRIBUTION_FRACTION_BP) /
+            BASIS;
+        assert(token.balanceOf(ALICE) == ALICE_BALANCE - amountInFees);
+
+        uint256 aliceClaimable = token.claimableTokens(ALICE);
 
         vm.startPrank(ALICE);
         token.claim();
         actualAliceBalance = token.balanceOf(ALICE);
 
+        assert(
+            actualAliceBalance == ALICE_BALANCE + aliceClaimable - amountInFees
+        );
+
         vm.deal(ALICE, 100 ether);
+
+        assert(address(ALICE).balance == 100 ether);
     }
 
     /// @notice This function is used to test the onlySupportedChains modifier
@@ -250,5 +266,20 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
             supportedChain,
             destinationAddress
         );
+    }
+
+    /// @notice It is a utility function to check if a contract is present in the minting contracts
+    function _assertContractIsPresent(
+        address[] memory mintingContracts,
+        address targetContract
+    ) internal view returns (bool isContractPresent) {
+        for (uint256 i = 0; i < mintingContracts.length; i++) {
+            if (mintingContracts[i] == targetContract) {
+                isContractPresent = true;
+                break;
+            }
+        }
+
+        return isContractPresent;
     }
 }
