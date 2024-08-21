@@ -39,7 +39,7 @@ abstract contract TokenBridgeInternal is
         return bytes(destinationChain).length != 0;
     }
 
-    /// @notice it check if the destination address is a valid input
+    /// @notice it checks if the destination address is a valid input
     /// @param destinationAddress the destination address
     /// @return true if the destination address is valid
     function _isDestinationAddressValid(
@@ -48,7 +48,7 @@ abstract contract TokenBridgeInternal is
         return bytes(destinationAddress).length != 0;
     }
 
-    /// @notice it check if the destination chain is supported
+    /// @notice it checks if the destination chain is supported
     /// @param destinationChain the destination chain
     /// @return true if the destination chain is supported
     function _isDestinationChainSupported(
