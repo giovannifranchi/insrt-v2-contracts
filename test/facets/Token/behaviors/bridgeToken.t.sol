@@ -6,6 +6,8 @@ import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
+import { IAxelarGasService } from "@axelar/interfaces/IAxelarGasService.sol";
+import { IAxelarGateway } from "@axelar/interfaces/IAxelarGateway.sol";
 
 /// @title TestBridgeToken
 /// @notice This contract tests the functionalities of the bridgeToken function
@@ -191,6 +193,46 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
 
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).bridgeToken(supportedChain, BRIDGE_AMOUNT);
+    }
+
+    /// @notice This function makes sure that the call to the AxelarGasService is made with the correct parameters
+    function test_bridgeToken_callToAxelarGasServiceShouldHappen() public {
+        _enableChain(OWNER);
+
+        vm.startPrank(ALICE);
+        bytes memory payload = abi.encode(BRIDGE_AMOUNT, ALICE);
+        bytes memory data = abi.encodeWithSelector(
+            IAxelarGasService.payNativeGasForContractCall.selector,
+            tokenAddress,
+            supportedChain,
+            destinationAddress,
+            payload,
+            ALICE
+        );
+        vm.expectCall(ARBITRUM_AXELAR_GAS_SERVICE, data);
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+            supportedChain,
+            BRIDGE_AMOUNT
+        );
+    }
+
+    /// @notice This function makes sure that the call to the AxelarGateway is made with the correct parameters
+    function test_bridgeToken_callToGatewayShouldHappen() public {
+        _enableChain(OWNER);
+
+        vm.startPrank(ALICE);
+        bytes memory payload = abi.encode(BRIDGE_AMOUNT, ALICE);
+        bytes memory data = abi.encodeWithSelector(
+            IAxelarGateway.callContract.selector,
+            supportedChain,
+            destinationAddress,
+            payload
+        );
+        vm.expectCall(ARBITRUM_AXELAR_GATEWAY, data);
+        ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
+            supportedChain,
+            BRIDGE_AMOUNT
+        );
     }
 
     /// @notice It is a utility function to enable supported chains
