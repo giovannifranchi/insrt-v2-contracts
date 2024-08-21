@@ -8,9 +8,9 @@ import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.so
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
 import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
 
-/// @title EnableSupportedChains
+/// @title Token_enableSupportedChains
 /// @notice This contract tests the functionalities of the enableSupportedChains function
-contract EnableSupportedChains is ArbForkTest, TokenBridge {
+contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
     event SupportedChainsEnabled(
         string indexed destinationChain,
         string indexed destinationAddress
@@ -37,7 +37,7 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if the owner can enable a new chain
-    function test_ownerCanSetNewChains() public {
+    function test_enableSupportedChains_ownerCanSetNewChains() public {
         _enableChain(OWNER);
 
         vm.assertEq(
@@ -48,7 +48,7 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if an event is emitted when a new chain is enabled
-    function test_enablingChainShouldEmitEvent() public {
+    function test_enableSupportedChains_enablingChainShouldEmitEvent() public {
         vm.expectEmit(true, true, false, false);
         emit SupportedChainsEnabled(supportedChain, destinationAddress);
 
@@ -57,14 +57,16 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if only the owner can enable a new chain
-    function test_onlyOwnerCanEnableChain() public {
+    function test_enableSupportedChains_onlyOwnerCanEnableChain() public {
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
         _enableChain(ALICE);
     }
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty chain should not be supported
-    function test_enablingEmptyChainShouldNotBeSupported() public {
+    function test_enableSupportedChains_enablingEmptyChainShouldNotBeSupported()
+        public
+    {
         vm.expectRevert(
             ITokenBridgeInternal.TokenBridge__InvalidChain.selector
         );
@@ -78,7 +80,9 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty address should not be supported
-    function test_enablingChainWithEmptyAddressShouldNotBeSupported() public {
+    function test_enableSupportedChains_enablingChainWithEmptyAddressShouldNotBeSupported()
+        public
+    {
         vm.expectRevert(
             ITokenBridgeInternal.TokenBridge__InvalidAddress.selector
         );

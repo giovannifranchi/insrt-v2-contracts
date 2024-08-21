@@ -6,9 +6,9 @@ import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 
-/// @title GetDestinationAddress
+/// @title Token_getDestinationAddress
 /// @notice This contract tests the functionalities of supportedChain function
-contract GetDestinationAddress is ArbForkTest, TokenBridge {
+contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
     address public OWNER = makeAddr("Owner");
     /// @dev address of the token proxy contract
     address public tokenAddress;
@@ -23,7 +23,7 @@ contract GetDestinationAddress is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the supportedChains function
     /// @dev It tests if the correct destination address is retrieved
-    function test_Fuzz_correctDestinationAddressIsRetrieved(
+    function testFuzz_getDestinationAddress_correctDestinationAddressIsRetrieved(
         string calldata supportedChain,
         string calldata destinationAddress
     ) public {

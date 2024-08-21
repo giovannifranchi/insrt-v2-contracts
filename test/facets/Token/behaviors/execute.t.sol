@@ -9,9 +9,9 @@ import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
 import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
-/// @title Execute
+/// @title Token_execute
 /// @notice This contract tests the functionalities of the execute function
-contract Execute is TokenBridge, ArbForkTest {
+contract Token_execute is TokenBridge, ArbForkTest {
     /// @dev an example of a supported chain
     string public supportedChain = "ethereum";
     /// @dev an example of a destination address, it is a random address
@@ -44,7 +44,9 @@ contract Execute is TokenBridge, ArbForkTest {
     /// @dev It checks wether the transaction has been approved by the AxelarGateway
     /// @dev Any address can call the execute function but the call will only be executed if the gateway has approved it
     /// @dev There is not a single defined address for Axelar relayers
-    function test_executeCannotBeCalledIfGatewayHasNotApprovedTheCall() public {
+    function test_execute_executeCannotBeCalledIfGatewayHasNotApprovedTheCall()
+        public
+    {
         _enableChain(OWNER);
 
         bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
@@ -60,7 +62,7 @@ contract Execute is TokenBridge, ArbForkTest {
         );
     }
 
-    function test_receiveContractCallAndExecute() public {
+    function test_execute_receiveContractCallAndExecute() public {
         _enableChain(OWNER);
         _approveContractCall();
 
@@ -79,7 +81,7 @@ contract Execute is TokenBridge, ArbForkTest {
         vm.assertEq(token.balanceOf(ALICE), AMOUNT_TO_MINT - amountForFees);
     }
 
-    function test_callMadeFromUnsupportedAddressReverts() public {
+    function test_execute_callMadeFromUnsupportedAddressReverts() public {
         _enableChain(OWNER);
         _approveContractCallWithUnsupportedAddress();
 
