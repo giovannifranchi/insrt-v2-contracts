@@ -5,13 +5,13 @@ pragma solidity 0.8.19;
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
+import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
+import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
 
 /// @title DisableSupportedChains
 /// @notice This contract tests the functionalities of DisableSupportedChains function
 contract DisableSupportedChains is ArbForkTest, TokenBridge {
-    error Ownable__NotOwner();
-    error TokenBridge__NotYetSupportedChain();
-
+    /// @notice Event emitted when a chain is disabled
     event SupportedChainsDisabled(string indexed destinationChain);
 
     /// @dev an example of a supported chain
@@ -65,7 +65,7 @@ contract DisableSupportedChains is ArbForkTest, TokenBridge {
     function test_onlyOwnerCanDisableChain() public {
         _enableChain(OWNER);
 
-        vm.expectRevert(Ownable__NotOwner.selector);
+        vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
 
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
@@ -74,7 +74,9 @@ contract DisableSupportedChains is ArbForkTest, TokenBridge {
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if disabling a not enabled chain is supported
     function test_disablingNonExistentChainShouldNotBeSupported() public {
-        vm.expectRevert(TokenBridge__NotYetSupportedChain.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__NotYetSupportedChain.selector
+        );
         vm.startPrank(OWNER);
         ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
     }

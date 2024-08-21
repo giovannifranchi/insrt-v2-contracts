@@ -5,17 +5,13 @@ pragma solidity 0.8.19;
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
+import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
 
 /// @title TestBridgeToken
 /// @notice This contract tests the functionalities of the bridgeToken function
 /// @dev It inherits from the TokenWithBridge contract and the ArbForkTest contract
 /// @dev For changing fork it is sufficient to change the ForkTest inheritance
 contract TestBridgeToken is ArbForkTest, TokenBridge {
-    error TokenBridge__UnsupportedChain();
-    error TokenBridge__NoZeroAmount();
-    error TokenBridge__InsufficientBalance();
-    error TokenBridge__NotEnoughGas();
-
     /// @notice Event emitted by Axelar Gateway when a contract call is made properly
     event ContractCall(
         address indexed sender,
@@ -70,7 +66,9 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
     /// @notice This function is used to test the onlySupportedChains modifier
     /// @dev It tests if bridging on an unsupported chain should not be supported
     function test_bridgingOnUnsupportedChainShouldNotBeSupported() public {
-        vm.expectRevert(TokenBridge__UnsupportedChain.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__UnsupportedChain.selector
+        );
 
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
@@ -84,7 +82,9 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
     function test_bridgingWithZeroAmountShouldNotBeSupported() public {
         _enableChain(OWNER);
 
-        vm.expectRevert(TokenBridge__NoZeroAmount.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__NoZeroAmount.selector
+        );
 
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
@@ -100,12 +100,13 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
 
         vm.startPrank(ALICE);
 
-        vm.expectRevert(TokenBridge__InsufficientBalance.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__InsufficientBalance.selector
+        );
 
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
             actualAliceBalance + 1
-    
         );
     }
 
@@ -182,7 +183,9 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
     function test_bridgeCannotHappenIfMinNativeAmountIsNotPayed() public {
         _enableChain(OWNER);
 
-        vm.expectRevert(TokenBridge__NotEnoughGas.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__NotEnoughGas.selector
+        );
 
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).bridgeToken(supportedChain, 10 ether);

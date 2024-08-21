@@ -5,14 +5,12 @@ pragma solidity 0.8.19;
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
+import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
+import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
 
 /// @title EnableSupportedChains
 /// @notice This contract tests the functionalities of the enableSupportedChains function
 contract EnableSupportedChains is ArbForkTest, TokenBridge {
-    error Ownable__NotOwner();
-    error TokenBridge__InvalidChain();
-    error TokenBridge__InvalidAddress();
-
     event SupportedChainsEnabled(
         string indexed destinationChain,
         string indexed destinationAddress
@@ -60,14 +58,16 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if only the owner can enable a new chain
     function test_onlyOwnerCanEnableChain() public {
-        vm.expectRevert(Ownable__NotOwner.selector);
+        vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
         _enableChain(ALICE);
     }
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty chain should not be supported
     function test_enablingEmptyChainShouldNotBeSupported() public {
-        vm.expectRevert(TokenBridge__InvalidChain.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__InvalidChain.selector
+        );
 
         vm.startPrank(OWNER);
         ITokenBridge(tokenAddress).enableSupportedChains(
@@ -79,7 +79,9 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty address should not be supported
     function test_enablingChainWithEmptyAddressShouldNotBeSupported() public {
-        vm.expectRevert(TokenBridge__InvalidAddress.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__InvalidAddress.selector
+        );
 
         vm.startPrank(OWNER);
         ITokenBridge(tokenAddress).enableSupportedChains(supportedChain, "");

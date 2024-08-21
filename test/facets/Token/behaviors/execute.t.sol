@@ -5,15 +5,13 @@ pragma solidity 0.8.19;
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { MockGateway } from "@axelar/test/mocks/MockGateway.sol";
-
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
+import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title Execute
 /// @notice This contract tests the functionalities of the execute function
 contract Execute is TokenBridge, ArbForkTest {
-    error NotApprovedByGateway();
-    error TokenBridge__NotCorrectSourceAddress();
-
     /// @dev an example of a supported chain
     string public supportedChain = "ethereum";
     /// @dev an example of a destination address, it is a random address
@@ -51,7 +49,7 @@ contract Execute is TokenBridge, ArbForkTest {
 
         bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
 
-        vm.expectRevert(NotApprovedByGateway.selector);
+        vm.expectRevert(IAxelarExecutable.NotApprovedByGateway.selector);
 
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).execute(
@@ -87,7 +85,9 @@ contract Execute is TokenBridge, ArbForkTest {
 
         vm.startPrank(AXELAR_RELAYER);
         bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
-        vm.expectRevert(TokenBridge__NotCorrectSourceAddress.selector);
+        vm.expectRevert(
+            ITokenBridgeInternal.TokenBridge__NotCorrectSourceAddress.selector
+        );
 
         ITokenBridge(tokenAddress).execute(
             SELECTOR_APPROVE_CONTRACT_CALL,
