@@ -43,6 +43,8 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
     uint256 public actualAliceBalance;
     /// @dev address of the token proxy contract
     address public tokenAddress;
+    /// @dev tthe amount to be bridged
+    uint256 public constant BRIDGE_AMOUNT = 10 ether;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -73,7 +75,7 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
-            10 ether
+            BRIDGE_AMOUNT
         );
     }
 
@@ -132,10 +134,10 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
-            10 ether
+            BRIDGE_AMOUNT
         );
 
-        vm.assertEq(token.balanceOf(ALICE), actualAliceBalance - 10 ether);
+        vm.assertEq(token.balanceOf(ALICE), actualAliceBalance - BRIDGE_AMOUNT);
     }
 
     /// @notice This function is used to test the bridgeToken function
@@ -150,12 +152,12 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
             tokenAddress,
             supportedChain,
             destinationAddress,
-            keccak256(abi.encode(10 ether, ALICE)),
-            abi.encode(10 ether, ALICE)
+            keccak256(abi.encode(BRIDGE_AMOUNT, ALICE)),
+            abi.encode(BRIDGE_AMOUNT, ALICE)
         );
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
-            10 ether
+            BRIDGE_AMOUNT
         );
     }
 
@@ -169,11 +171,11 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
         emit TokenBridgeInitialised(
             supportedChain,
             destinationAddress,
-            10 ether
+            BRIDGE_AMOUNT
         );
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
-            10 ether
+            BRIDGE_AMOUNT
         );
     }
 
@@ -188,7 +190,7 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
         );
 
         vm.startPrank(ALICE);
-        ITokenBridge(tokenAddress).bridgeToken(supportedChain, 10 ether);
+        ITokenBridge(tokenAddress).bridgeToken(supportedChain, BRIDGE_AMOUNT);
     }
 
     /// @notice It is a utility function to enable supported chains
