@@ -18,4 +18,9 @@ interface ITokenHarness {
         address to,
         uint256 amount
     ) external;
+
+    /// @notice modifies distribution fee
+    /// @param newValue new value for distribution fee
+    /// @dev modifies the original function to set the distribution fee to zero
+    function modified_setDistributionFee(uint32 newValue) external;
 }

@@ -89,7 +89,7 @@ contract TokenHelper {
                 selectors: tokenFunctionSelectors
             });
 
-        bytes4[] memory tokenHarnessFunctionSelectors = new bytes4[](2);
+        bytes4[] memory tokenHarnessFunctionSelectors = new bytes4[](3);
 
         tokenHarnessFunctionSelectors[0] = ITokenHarness
             .exposed_accrueTokens
@@ -97,6 +97,9 @@ contract TokenHelper {
 
         tokenHarnessFunctionSelectors[1] = ITokenHarness
             .exposed_beforeTokenTransfer
+            .selector;
+        tokenHarnessFunctionSelectors[2] = ITokenHarness
+            .modified_setDistributionFee
             .selector;
 
         ISolidStateDiamond.FacetCut

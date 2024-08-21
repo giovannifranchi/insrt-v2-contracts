@@ -62,4 +62,12 @@ contract Token_setDistributionFractionBP is
 
         token.setDistributionFractionBP(newDistributionFractionBP);
     }
+
+    /// @dev ensures setDistributionFractionBP reverts when new value is zero
+    function test_setDistributionFractionBPRevertsWhenValueIsZero() public {
+        vm.expectRevert(
+            ITokenInternal.DistributionFractionBPCannotBeZero.selector
+        );
+        token.setDistributionFractionBP(0);
+    }
 }

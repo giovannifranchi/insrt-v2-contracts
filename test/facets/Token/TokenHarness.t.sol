@@ -26,4 +26,9 @@ contract TokenHarness is Token, ITokenHarness {
     ) external {
         _beforeTokenTransfer(from, to, amount);
     }
+
+    /// @inheritdoc ITokenHarness
+    function modified_setDistributionFee(uint32 newValue) external {
+        Storage.layout().distributionFractionBP = newValue;
+    }
 }
