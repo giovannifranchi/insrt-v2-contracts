@@ -104,7 +104,8 @@ contract TestBridgeToken is ArbForkTest, TokenBridge {
 
         ITokenBridge(tokenAddress).bridgeToken{ value: 0.01 ether }(
             supportedChain,
-            actualAliceBalance + 10
+            actualAliceBalance + 1
+    
         );
     }
 
