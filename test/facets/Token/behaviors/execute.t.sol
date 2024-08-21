@@ -6,9 +6,11 @@ import { TokenBridge } from "../TokenBridge.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { MockGateway } from "@axelar/test/mocks/MockGateway.sol";
 
+import { ArbForkTest } from "../../../ArbForkTest.t.sol";
+
 /// @title Execute
 /// @notice This contract tests the functionalities of the execute function
-contract Execute is TokenBridge {
+contract Execute is TokenBridge, ArbForkTest {
     error NotApprovedByGateway();
     error TokenBridge__NotCorrectSourceAddress();
 
