@@ -34,7 +34,7 @@ contract TokenBridgeHelper {
         tokenBridgeFunctionSelectors[2] = ITokenBridge
             .disableSupportedChains
             .selector;
-        tokenBridgeFunctionSelectors[3] = ITokenBridge.supportedChains.selector;
+        tokenBridgeFunctionSelectors[3] = ITokenBridge.getDestinationAddress.selector;
         tokenBridgeFunctionSelectors[4] = IAxelarExecutable.execute.selector;
         tokenBridgeFunctionSelectors[5] = IAxelarExecutable
             .executeWithToken

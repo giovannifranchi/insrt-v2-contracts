@@ -6,9 +6,9 @@ import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 
-/// @title SupportedChain
+/// @title GetDestinationAddress
 /// @notice This contract tests the functionalities of supportedChain function
-contract SupportedChain is ArbForkTest, TokenBridge {
+contract GetDestinationAddress is ArbForkTest, TokenBridge {
     address public OWNER = makeAddr("Owner");
     /// @dev address of the token proxy contract
     address public tokenAddress;
@@ -33,7 +33,7 @@ contract SupportedChain is ArbForkTest, TokenBridge {
         _enableChain(OWNER, supportedChain, destinationAddress);
 
         vm.assertEq(
-            ITokenBridge(tokenAddress).supportedChains(supportedChain),
+            ITokenBridge(tokenAddress).getDestinationAddress(supportedChain),
             destinationAddress
         );
     }

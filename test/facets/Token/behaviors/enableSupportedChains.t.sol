@@ -43,7 +43,7 @@ contract EnableSupportedChains is ArbForkTest, TokenBridge {
         _enableChain(OWNER);
 
         vm.assertEq(
-            ITokenBridge(tokenAddress).supportedChains(supportedChain),
+            ITokenBridge(tokenAddress).getDestinationAddress(supportedChain),
             destinationAddress
         );
     }

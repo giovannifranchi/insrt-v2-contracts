@@ -119,7 +119,8 @@ abstract contract TokenBridgeInternal is
 
     /// @notice it returns the supported chains
     /// @param destinationChain the destination chain
-    function _supportedChains(
+    /// @return destinationAddress
+    function _getDestinationAddress(
         string calldata destinationChain
     ) internal view returns (string memory destinationAddress) {
         return destinationAddress = Storage.layout().supportedChains[destinationChain];
@@ -146,7 +147,7 @@ abstract contract TokenBridgeInternal is
         uint256 amountToBurn = _calculateAmountToBurn(amount, totalBalance);
         _claimAndBurnTokens(msg.sender, amountToBurn);
 
-        string memory contractAddress = _supportedChains(destinationChain);
+        string memory contractAddress = _getDestinationAddress(destinationChain);
         bytes memory payload = abi.encode(amountToBurn, msg.sender);
 
         // Ensure to pay for the gas of the contract call on the destination chain
@@ -186,7 +187,7 @@ abstract contract TokenBridgeInternal is
         string memory _sourceAddress = sourceAddress;
 
         if (
-            _hashString(_supportedChains(sourceChain)) !=
+            _hashString(_getDestinationAddress(sourceChain)) !=
             _hashString(_sourceAddress)
         ) revert TokenBridge__NotCorrectSourceAddress();
 

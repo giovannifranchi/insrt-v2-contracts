@@ -41,10 +41,10 @@ contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
     }
 
     /// @inheritdoc ITokenBridge
-    function supportedChains(
+    function getDestinationAddress(
         string calldata destinationChain
     ) public view returns (string memory destinationAddress) {
-        return destinationAddress = _supportedChains(destinationChain);
+        return destinationAddress = _getDestinationAddress(destinationChain);
     }
 
     /// @inheritdoc ITokenBridge

@@ -40,7 +40,7 @@ contract DisableSupportedChains is ArbForkTest, TokenBridge {
         ITokenBridge(tokenAddress).disableSupportedChains(supportedChain);
 
         vm.assertEq(
-            ITokenBridge(tokenAddress).supportedChains(supportedChain),
+            ITokenBridge(tokenAddress).getDestinationAddress(supportedChain),
             ""
         );
     }
