@@ -140,7 +140,7 @@ abstract contract TokenBridgeInternal is
         uint256 totalBalance = _calculateUserTotalBalance(msg.sender);
         if (
             (amount > totalBalance && amount != type(uint256).max) ||
-            totalBalance <= 0
+            totalBalance == 0
         ) revert TokenBridge__InsufficientBalance();
 
         uint256 amountToBurn = _calculateAmountToBurn(amount, totalBalance);
