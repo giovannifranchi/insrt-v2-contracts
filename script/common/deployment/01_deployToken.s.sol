@@ -36,21 +36,10 @@ contract DeployToken is Script {
         // deploy Token facet
         Token tokenFacet = new Token();
 
-        uint256 canDeployTokenBridgeFacet = vm.envUint(
-            "CAN_DEPLOY_TOKEN_BRIDGE_FACET"
-        );
+        // deploy TokenBridge facet
+        ITokenBridge tokenBridgeFacet = new TokenBridge(gateway, gasService);
 
-        ITokenBridge tokenBridgeFacet;
-
-        if (canDeployTokenBridgeFacet == 1) {
-            // deploy TokenBridge facet
-            tokenBridgeFacet = new TokenBridge(gateway, gasService);
-
-            console.log(
-                "TokenBridge Facet Address: ",
-                address(tokenBridgeFacet)
-            );
-        }
+        console.log("TokenBridge Facet Address: ", address(tokenBridgeFacet));
 
         // deploy TokenProxy
         TokenProxy tokenProxy = new TokenProxy(name, symbol);
@@ -58,7 +47,7 @@ contract DeployToken is Script {
         console.log("Token Facet Address: ", address(tokenFacet));
         console.log("Token Proxy Address: ", address(tokenProxy));
 
-        // writeTokenProxyAddress(address(tokenProxy));
+        writeTokenProxyAddress(address(tokenProxy));
 
         // get Token facet cuts
         ITokenProxy.FacetCut[] memory facetCuts = getTokenFacetCuts(
@@ -68,18 +57,12 @@ contract DeployToken is Script {
         // cut Token into TokenProxy
         tokenProxy.diamondCut(facetCuts, address(0), "");
 
-        if (canDeployTokenBridgeFacet == 1) {
-            // get TokenBridge facet cut
-            ITokenProxy.FacetCut[]
-                memory tokenBridgeFacetCut = getTokenBridgeFacet(
-                    address(tokenBridgeFacet)
-                );
+        ITokenProxy.FacetCut[] memory tokenBridgeFacetCut = getTokenBridgeFacet(
+            address(tokenBridgeFacet)
+        );
 
-            // cut TokenBridge into TokenProxy
-            tokenProxy.diamondCut(tokenBridgeFacetCut, address(0), "");
-        }
-
-        IToken(address(tokenProxy)).addMintingContract(address(tokenProxy));
+        // cut TokenBridge into TokenProxy
+        tokenProxy.diamondCut(tokenBridgeFacetCut, address(0), "");
 
         vm.stopBroadcast();
     }
@@ -189,7 +172,9 @@ contract DeployToken is Script {
         tokenBridgeFunctionSelectors[2] = ITokenBridge
             .disableSupportedChains
             .selector;
-        tokenBridgeFunctionSelectors[3] = ITokenBridge.getDestinationAddress.selector;
+        tokenBridgeFunctionSelectors[3] = ITokenBridge
+            .getDestinationAddress
+            .selector;
         tokenBridgeFunctionSelectors[4] = IAxelarExecutable.execute.selector;
         tokenBridgeFunctionSelectors[5] = IAxelarExecutable
             .executeWithToken
