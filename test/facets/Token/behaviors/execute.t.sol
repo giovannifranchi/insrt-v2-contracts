@@ -44,6 +44,8 @@ contract Execute is TokenBridge, ArbForkTest {
     /// @notice This function is used to test the execute function
     /// @dev Its major aim is to prevent arbitrary calls to the contract to be possible
     /// @dev It checks wether the transaction has been approved by the AxelarGateway
+    /// @dev Any address can call the execute function but the call will only be executed if the gateway has approved it
+    /// @dev There is not a single defined address for Axelar relayers
     function test_executeCannotBeCalledIfGatewayHasNotApprovedTheCall() public {
         _enableChain(OWNER);
 
