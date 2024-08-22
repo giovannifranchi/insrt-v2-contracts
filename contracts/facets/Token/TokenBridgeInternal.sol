@@ -194,27 +194,33 @@ abstract contract TokenBridgeInternal is
     }
 
     /// @notice it enables multiple address lengths
-    /// @param lengths the address lengths
+    /// @param mask the address lengths passed through a bitmask
     /// @dev it could be useful to enable multiple address lengths at once for cases where chains have different address lengths (solana: 32 to 44)
-    function _batchEnableAddressLength(uint256[] calldata lengths) internal {
-        if (lengths.length == 0 || lengths.length > 256)
-            revert TokenBridge__InvalidAddressesLengths();
+    /// @dev while not very user-friendly, it is a powerful tool to enable multiple address lengths at once
+    function _batchEnableAddressLength(uint256 mask) internal {
+        if (
+            mask == 0 ||
+            mask > ((1 << MAX_ADDRESS_LENGTH) - 1) ||
+            (mask & 1) != 0
+        ) revert TokenBridge__InvalidAddressesLengths();
 
-        for (uint256 i = 0; i < lengths.length; i++) {
-            _enableAddressLength(lengths[i]);
-        }
+        Storage.layout().allowedAddressLengthBitMap |= mask;
+        emit AddressLengthsEnabled(mask);
     }
 
     /// @notice it disables multiple address lengths
-    /// @param lengths the address lengths
+    /// @param mask the address lengths passed through a bitmask
     /// @dev it could be useful to disable multiple address lengths at once for cases where chains have different address lengths (solana: 32 to 44)
-    function _batchDisableAddressLength(uint256[] calldata lengths) internal {
-        if (lengths.length == 0 || lengths.length > 256)
-            revert TokenBridge__InvalidAddressesLengths();
+    /// @dev while not very user-friendly, it is a powerful tool to enable multiple address lengths at once
+    function _batchDisableAddressLength(uint256 mask) internal {
+        if (
+            mask == 0 ||
+            mask > ((1 << MAX_ADDRESS_LENGTH) - 1) ||
+            (mask & 1) != 0
+        ) revert TokenBridge__InvalidAddressesLengths();
 
-        for (uint256 i = 0; i < lengths.length; i++) {
-            _disableAddressLength(lengths[i]);
-        }
+        Storage.layout().allowedAddressLengthBitMap &= ~mask;
+        emit AddressLengthsDisabled(mask);
     }
 
     /// @notice it enables an address length

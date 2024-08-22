@@ -54,12 +54,14 @@ interface ITokenBridge is IAxelarExecutable {
     function disableAddressLength(uint256 length) external;
 
     /// @notice it enables multiple address lengths
-    /// @param lengths the lengths of the addresses
+    /// @param mask the lengths of the addresses in a bitmask
     /// @dev only the owner can call this function
-    function batchEnableAddressLength(uint256[] calldata lengths) external;
+    /// @dev if already active values are passed they will be ignored
+    function batchEnableAddressLength(uint256 mask) external;
 
     /// @notice it disables multiple address lengths
-    /// @param lengths the lengths of the addresses
+    /// @param mask the lengths of the addresses in a bitmask
     /// @dev only the owner can call this function
-    function batchDisableAddressLength(uint256[] calldata lengths) external;
+    /// @dev if already inactive values are passed they will be ignored
+    function batchDisableAddressLength(uint256 mask) external;
 }

@@ -66,16 +66,12 @@ contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
     }
 
     /// @inheritdoc ITokenBridge
-    function batchEnableAddressLength(
-        uint256[] calldata lengths
-    ) external onlyOwner {
-        _batchEnableAddressLength(lengths);
+    function batchEnableAddressLength(uint256 mask) external onlyOwner {
+        _batchEnableAddressLength(mask);
     }
 
     /// @inheritdoc ITokenBridge
-    function batchDisableAddressLength(
-        uint256[] calldata lengths
-    ) external onlyOwner {
-        _batchDisableAddressLength(lengths);
+    function batchDisableAddressLength(uint256 mask) external onlyOwner {
+        _batchDisableAddressLength(mask);
     }
 }

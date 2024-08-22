@@ -73,4 +73,12 @@ interface ITokenBridgeInternal {
     /// @notice it is emitted when the address length is disabled
     /// @param length the address length
     event AddressLengthDisabled(uint256 indexed length);
+
+    /// @notice it is emitted when the address lengths are enabled
+    /// @param mask the address lengths bitmask
+    event AddressLengthsEnabled(uint256 indexed mask);
+
+    /// @notice it is emitted when the address lengths are disabled
+    /// @param mask the address lengths bitmask
+    event AddressLengthsDisabled(uint256 indexed mask);
 }
