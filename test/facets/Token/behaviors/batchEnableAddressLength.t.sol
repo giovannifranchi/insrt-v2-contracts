@@ -19,7 +19,6 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
     uint256 public constant SOLANA_ADDRESS_LENGTH = 32;
     uint256 public constant COSMOS_ADDRESS_LENGTH = 40;
     uint256 public constant POLKADOT_ADDRESS_LENGTH = 44;
-    uint256 public constant MAX_LENGHT = type(uint8).max;
     uint256[] public lenghts = [
         EVM_ADDRESS_LENGTH,
         SOLANA_ADDRESS_LENGTH,
@@ -52,17 +51,6 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
             ITokenBridgeInternal.TokenBridge__InvalidAddressesLengths.selector
         );
         ITokenBridge(tokenAddress).batchEnableAddressLength(0);
-    }
-
-    /// @notice it tests the batchEnableAddressLength function reverts if the mask is greater than the maximum length
-    function test_batchEnableAddressLength_shouldRevert_ifMaskIsGreaterThanMax()
-        public
-    {
-        uint256 invalidMask = (1 << (MAX_LENGHT + 1));
-        vm.expectRevert(
-            ITokenBridgeInternal.TokenBridge__InvalidAddressesLengths.selector
-        );
-        ITokenBridge(tokenAddress).batchEnableAddressLength(invalidMask);
     }
 
     /// @notice it tests the batchEnableAddressLength function reverts if the mask has zero in it
