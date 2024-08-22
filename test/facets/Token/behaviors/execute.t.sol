@@ -77,9 +77,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
         );
         vm.stopPrank();
 
-        uint256 amountForFees = (AMOUNT_TO_MINT *
-            token.distributionFractionBP()) / token.BASIS();
-        vm.assertEq(token.balanceOf(ALICE), AMOUNT_TO_MINT - amountForFees);
+        vm.assertEq(token.balanceOf(ALICE), AMOUNT_TO_MINT);
     }
 
     /// @notice This function is testing whether an approved call from axelar can be executed even tough the address from the source chain is not supported

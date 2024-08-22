@@ -290,7 +290,7 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
         );
 
         _claim(receiver);
-        _mint(amount, receiver);
+        _mint(receiver, amount);
         emit TokenBridgeFinalized(sourceChain, sourceAddress, amount, receiver);
     }
 }
