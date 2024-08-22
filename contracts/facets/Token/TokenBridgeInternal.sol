@@ -7,19 +7,13 @@ import { TokenInternal } from "./TokenInternal.sol";
 
 import { ITokenBridgeInternal } from "./ITokenBridgeInternal.sol";
 
-import { AxelarExecutable } from "@axelar/executable/AxelarExecutable.sol";
-
 import { IAxelarGasService } from "@axelar/interfaces/IAxelarGasService.sol";
 
 import { IAxelarGateway } from "@axelar/interfaces/IAxelarGateway.sol";
 
 /// @title TokenBridgeInternal
 /// @notice it contains internal functions of the TokenBridgeInternal contract
-abstract contract TokenBridgeInternal is
-    TokenInternal,
-    AxelarExecutable,
-    ITokenBridgeInternal
-{
+abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
     /// @notice Minimum gas required to execute a transaction through Axelar Gateway
     uint256 public constant MIN_GAS_PER_TX = 0.001 ether;
 
@@ -28,7 +22,8 @@ abstract contract TokenBridgeInternal is
 
     /// @notice Axelar Gas Service contract in charge of handling gas disposal on other chains
     IAxelarGasService public immutable axelarGasService;
-    constructor(address gateway, address gasService) AxelarExecutable(gateway) {
+
+    constructor(address gasService) {
         if (gasService == address(0)) revert TokenBridge__InvalidAddress();
         axelarGasService = IAxelarGasService(gasService);
     }
@@ -145,7 +140,8 @@ abstract contract TokenBridgeInternal is
     /// @dev it emits a TokenBridgeInitialised event
     function _bridgeToken(
         string calldata destinationChain,
-        uint256 amount
+        uint256 amount,
+        IAxelarGateway gateway
     ) internal {
         if (amount == 0) revert TokenBridge__NoZeroAmount();
         if (msg.value < MIN_GAS_PER_TX) revert TokenBridge__NotEnoughGas();
@@ -270,15 +266,19 @@ abstract contract TokenBridgeInternal is
             addressLengthBitMap = Storage.layout().allowedAddressLengthBitMap;
     }
 
-    /// @inheritdoc AxelarExecutable
+    /// @notice it executes a transaction call from the gateway
+    /// @param sourceChain the source chain
+    /// @param sourceAddress the source address
+    /// @param payload the payload
     function _execute(
         string calldata sourceChain,
         string calldata sourceAddress,
         bytes calldata payload
-    ) internal override {
+    ) internal virtual {
         // store it in memory to call _hashString()
         string memory _sourceAddress = sourceAddress;
 
+        // This check is made in oder to ensure that no one else can make a valid call to this contract except registered addresses
         if (
             _hashString(_getDestinationAddress(sourceChain)) !=
             _hashString(_sourceAddress)

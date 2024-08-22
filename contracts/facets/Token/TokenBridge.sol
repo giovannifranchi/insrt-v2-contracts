@@ -4,6 +4,8 @@ pragma solidity 0.8.19;
 
 import { IAxelarGateway } from "@axelar/interfaces/IAxelarGateway.sol";
 
+import { AxelarExecutable } from "@axelar/executable/AxelarExecutable.sol";
+
 import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
 
 import { ITokenBridge } from "./ITokenBridge.sol";
@@ -13,7 +15,12 @@ import { TokenBridgeInternal } from "./TokenBridgeInternal.sol";
 /// @title TokenBridge
 /// @notice it is the main contract for the Token Bridge
 /// @dev it contains all the external functions of TokenBridge
-contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
+contract TokenBridge is
+    OwnableInternal,
+    AxelarExecutable,
+    TokenBridgeInternal,
+    ITokenBridge
+{
     modifier onlySupportedChains(string calldata destinationChain) {
         if (!_isDestinationChainSupported(destinationChain))
             revert TokenBridge__UnsupportedChain();
@@ -23,7 +30,7 @@ contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
     constructor(
         address gateway,
         address gasService
-    ) TokenBridgeInternal(gateway, gasService) {}
+    ) AxelarExecutable(gateway) TokenBridgeInternal(gasService) {}
 
     /// @inheritdoc ITokenBridge
     function enableSupportedChains(
@@ -52,7 +59,7 @@ contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
         string calldata destinationChain,
         uint256 amount
     ) external payable onlySupportedChains(destinationChain) {
-        _bridgeToken(destinationChain, amount);
+        _bridgeToken(destinationChain, amount, gateway);
     }
 
     /// @inheritdoc ITokenBridge
@@ -73,5 +80,14 @@ contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
     /// @inheritdoc ITokenBridge
     function batchDisableAddressLength(uint256 mask) external onlyOwner {
         _batchDisableAddressLength(mask);
+    }
+
+    /// @inheritdoc AxelarExecutable
+    function _execute(
+        string calldata sourceChain,
+        string calldata sourceAddress,
+        bytes calldata payload
+    ) internal override(AxelarExecutable, TokenBridgeInternal) {
+        super._execute(sourceChain, sourceAddress, payload);
     }
 }
