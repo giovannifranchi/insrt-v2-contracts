@@ -267,14 +267,14 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
     }
 
     /// @notice it executes a transaction call from the gateway
+    /// @param payload the payload
     /// @param sourceChain the source chain
     /// @param sourceAddress the source address
-    /// @param payload the payload
     function _execute(
+        bytes calldata payload,
         string calldata sourceChain,
-        string calldata sourceAddress,
-        bytes calldata payload
-    ) internal virtual {
+        string calldata sourceAddress
+    ) internal {
         // store it in memory to call _hashString()
         string memory _sourceAddress = sourceAddress;
 

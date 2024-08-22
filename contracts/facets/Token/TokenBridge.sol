@@ -87,7 +87,7 @@ contract TokenBridge is
         string calldata sourceChain,
         string calldata sourceAddress,
         bytes calldata payload
-    ) internal override(AxelarExecutable, TokenBridgeInternal) {
-        super._execute(sourceChain, sourceAddress, payload);
+    ) internal override {
+        _execute(payload, sourceChain, sourceAddress);
     }
 }
