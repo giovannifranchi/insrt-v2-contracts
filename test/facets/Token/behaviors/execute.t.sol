@@ -30,6 +30,9 @@ contract Token_execute is TokenBridge, ArbForkTest {
     string public exploiterAddress =
         "0x8643Aedb4D1593BA12e50644401D976aebDc90e8";
 
+    /// @dev takes also into account the 0x prefix
+    uint256 public constant EVM_ADDRESS_LENGHT = 42;
+
     function setUp() public virtual override {
         vm.startPrank(OWNER);
         super.setUp();
@@ -104,6 +107,9 @@ contract Token_execute is TokenBridge, ArbForkTest {
     /// @notice It is a utility function to enable supported chains
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
+
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress

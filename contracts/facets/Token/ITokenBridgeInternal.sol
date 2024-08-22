@@ -15,6 +15,18 @@ interface ITokenBridgeInternal {
     /// @notice it is thown when the address is invalid
     error TokenBridge__InvalidAddress();
 
+    /// @notice it is thown when the address length is invalid
+    error TokenBridge__InvalidAddressLength();
+
+    /// @notice it is thown when the addresses lengths provided to the _batchEnableAddressLength and _batchDisableAddressLength are invalid
+    error TokenBridge__InvalidAddressesLengths();
+
+    /// @notice it is thown when the address length is already enabled
+    error TokenBridge__AddressLengthAlreadyEnabled();
+
+    /// @notice it is thown when the address length is not enabled
+    error TokenBridge__AddressLengthNotEnabled();
+
     /// @notice it is thown when the chain is not yet supported
     error TokenBridge__NotYetSupportedChain();
 
@@ -53,4 +65,12 @@ interface ITokenBridgeInternal {
         uint256 indexed amount,
         address indexed receiver
     );
+
+    /// @notice it is emitted when the address length is enabled
+    /// @param length the address length
+    event AddressLengthEnabled(uint256 indexed length);
+
+    /// @notice it is emitted when the address length is disabled
+    /// @param length the address length
+    event AddressLengthDisabled(uint256 indexed length);
 }

@@ -23,6 +23,9 @@ abstract contract TokenBridgeInternal is
     /// @notice Minimum gas required to execute a transaction through Axelar Gateway
     uint256 public constant MIN_GAS_PER_TX = 0.001 ether;
 
+    /// @notice Maximum address length that can be stored in a uint256 bitmap
+    uint8 public constant MAX_ADDRESS_LENGTH = 255;
+
     /// @notice Axelar Gas Service contract in charge of handling gas disposal on other chains
     IAxelarGasService public immutable axelarGasService;
     constructor(address gateway, address gasService) AxelarExecutable(gateway) {
@@ -44,19 +47,25 @@ abstract contract TokenBridgeInternal is
     /// @return isDestinationAddressValid
     function _isDestinationAddressValid(
         string calldata destinationAddress
-    ) internal pure returns (bool isDestinationAddressValid) {
-        return isDestinationAddressValid = bytes(destinationAddress).length != 0;
+    ) internal view returns (bool isDestinationAddressValid) {
+        return
+            isDestinationAddressValid = _isAddressLengthEnabled(
+                bytes(destinationAddress).length
+            );
     }
 
     /// @notice it checks if the destination chain is supported
     /// @param destinationChain the destination chain
+    /// @dev here it is sufficient to check whether the destination address is not empty because it passed the legth check earlier
     /// @return isDestinationChainSupported
     function _isDestinationChainSupported(
         string calldata destinationChain
     ) internal view returns (bool isDestinationChainSupported) {
         return
-            isDestinationChainSupported = bytes(Storage.layout().supportedChains[destinationChain]).length !=
-            0;
+            isDestinationChainSupported =
+                bytes(Storage.layout().supportedChains[destinationChain])
+                    .length !=
+                0;
     }
 
     /// @notice it calculates the total balance of a user
@@ -88,7 +97,8 @@ abstract contract TokenBridgeInternal is
         uint256 amount,
         uint256 totalBalance
     ) internal pure returns (uint256 amountToBurn) {
-        return amountToBurn = amount == type(uint256).max ? totalBalance : amount;
+        return
+            amountToBurn = amount == type(uint256).max ? totalBalance : amount;
     }
 
     /// @notice it enables a supported chain
@@ -123,7 +133,10 @@ abstract contract TokenBridgeInternal is
     function _getDestinationAddress(
         string calldata destinationChain
     ) internal view returns (string memory destinationAddress) {
-        return destinationAddress = Storage.layout().supportedChains[destinationChain];
+        return
+            destinationAddress = Storage.layout().supportedChains[
+                destinationChain
+            ];
     }
 
     /// @notice it bridges a token from the source chain to the destination chain
@@ -146,7 +159,9 @@ abstract contract TokenBridgeInternal is
         uint256 amountToBurn = _calculateAmountToBurn(amount, totalBalance);
         _claimAndBurnTokens(msg.sender, amountToBurn);
 
-        string memory contractAddress = _getDestinationAddress(destinationChain);
+        string memory contractAddress = _getDestinationAddress(
+            destinationChain
+        );
         bytes memory payload = abi.encode(amountToBurn, msg.sender);
 
         // Ensure to pay for the gas of the contract call on the destination chain
@@ -172,8 +187,86 @@ abstract contract TokenBridgeInternal is
     /// @param str the string to hash
     /// @return hashedString
     /// @dev it is an utility function used to enable string comparison
-    function _hashString(string memory str) internal pure returns (bytes32 hashedString) {
+    function _hashString(
+        string memory str
+    ) internal pure returns (bytes32 hashedString) {
         return hashedString = keccak256(abi.encodePacked(str));
+    }
+
+    /// @notice it enables multiple address lengths
+    /// @param lengths the address lengths
+    /// @dev it could be useful to enable multiple address lengths at once for cases where chains have different address lengths (solana: 32 to 44)
+    function _batchEnableAddressLength(uint256[] calldata lengths) internal {
+        if (lengths.length == 0 || lengths.length > 256)
+            revert TokenBridge__InvalidAddressesLengths();
+
+        for (uint256 i = 0; i < lengths.length; i++) {
+            _enableAddressLength(lengths[i]);
+        }
+    }
+
+    /// @notice it disables multiple address lengths
+    /// @param lengths the address lengths
+    /// @dev it could be useful to disable multiple address lengths at once for cases where chains have different address lengths (solana: 32 to 44)
+    function _batchDisableAddressLength(uint256[] calldata lengths) internal {
+        if (lengths.length == 0 || lengths.length > 256)
+            revert TokenBridge__InvalidAddressesLengths();
+
+        for (uint256 i = 0; i < lengths.length; i++) {
+            _disableAddressLength(lengths[i]);
+        }
+    }
+
+    /// @notice it enables an address length
+    /// @param length the address length
+    function _enableAddressLength(uint256 length) internal {
+        if (length == 0 || length > MAX_ADDRESS_LENGTH)
+            revert TokenBridge__InvalidAddressLength();
+        if (_isAddressLengthEnabled(length))
+            revert TokenBridge__AddressLengthAlreadyEnabled();
+
+        _toggleAddressLenght(length);
+        emit AddressLengthEnabled(length);
+    }
+
+    /// @notice it disables an address length
+    /// @param length the address length
+    function _disableAddressLength(uint256 length) internal {
+        if (length == 0 || length > MAX_ADDRESS_LENGTH)
+            revert TokenBridge__InvalidAddressLength();
+        if (!_isAddressLengthEnabled(length))
+            revert TokenBridge__AddressLengthNotEnabled();
+
+        _toggleAddressLenght(length);
+        emit AddressLengthDisabled(length);
+    }
+
+    /// @notice it toggles the allowed address length
+    /// @param length the address length
+    function _toggleAddressLenght(uint256 length) internal {
+        Storage.layout().allowedAddressLengthBitMap ^= (1 << length);
+    }
+
+    /// @notice it checks if the address length is enabled
+    /// @param length the address length
+    /// @return isAddressLengthEnabled
+    function _isAddressLengthEnabled(
+        uint256 length
+    ) internal view returns (bool isAddressLengthEnabled) {
+        return
+            isAddressLengthEnabled =
+                (_getAddressLengthBitMap() & (1 << length)) != 0;
+    }
+
+    /// @notice it returns the address length bitmap
+    /// @return addressLengthBitMap
+    function _getAddressLengthBitMap()
+        internal
+        view
+        returns (uint256 addressLengthBitMap)
+    {
+        return
+            addressLengthBitMap = Storage.layout().allowedAddressLengthBitMap;
     }
 
     /// @inheritdoc AxelarExecutable

@@ -24,6 +24,9 @@ library TokenStorage {
         /// @notice it stores the supported chains, the key is the destination chain and the value is the destination address
         /// @dev it uses strings to store addresses in order to support EVM and non-EVM chain address types, it is an Axelar standard
         mapping(string supportedChain => string targetAddress) supportedChains;
+        /// @dev it stores the allowed address length
+        /// @dev it is a bitmap, each bit represents a length, if the bit is set to 1, the length is allowed
+        uint256 allowedAddressLengthBitMap;
     }
 
     bytes32 internal constant STORAGE_SLOT =
