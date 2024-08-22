@@ -27,6 +27,15 @@ contract TokenHarness is Token, ITokenHarness {
         _beforeTokenTransfer(from, to, amount);
     }
 
+    function exposed_isAddressLengthEnabled(
+        uint256 length
+    ) external view returns (bool isAddressLengthEnabled) {
+        return
+            isAddressLengthEnabled =
+                (Storage.layout().allowedAddressLengthBitMap & (1 << length)) !=
+                0;
+    }
+
     /// @inheritdoc ITokenHarness
     function modified_setDistributionFee(uint32 newValue) external {
         Storage.layout().distributionFractionBP = newValue;

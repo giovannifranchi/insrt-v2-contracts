@@ -54,4 +54,24 @@ contract TokenBridge is OwnableInternal, TokenBridgeInternal, ITokenBridge {
     ) external payable onlySupportedChains(destinationChain) {
         _bridgeToken(destinationChain, amount);
     }
+
+    /// @inheritdoc ITokenBridge
+    function enableAddressLength(uint256 length) external onlyOwner {
+        _enableAddressLength(length);
+    }
+
+    /// @inheritdoc ITokenBridge
+    function disableAddressLength(uint256 length) external onlyOwner {
+        _disableAddressLength(length);
+    }
+
+    /// @inheritdoc ITokenBridge
+    function batchEnableAddressLength(uint256 mask) external onlyOwner {
+        _batchEnableAddressLength(mask);
+    }
+
+    /// @inheritdoc ITokenBridge
+    function batchDisableAddressLength(uint256 mask) external onlyOwner {
+        _batchDisableAddressLength(mask);
+    }
 }

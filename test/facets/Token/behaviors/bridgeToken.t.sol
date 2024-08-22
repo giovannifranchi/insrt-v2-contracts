@@ -47,6 +47,8 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     address public tokenAddress;
     /// @dev tthe amount to be bridged
     uint256 public constant BRIDGE_AMOUNT = 10 ether;
+    /// @dev takes also into account the 0x prefix
+    uint256 public constant EVM_ADDRESS_LENGHT = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -262,6 +264,9 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     /// @notice It is a utility function to enable supported chains
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
+
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress
@@ -272,7 +277,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     function _assertContractIsPresent(
         address[] memory mintingContracts,
         address targetContract
-    ) internal view returns (bool isContractPresent) {
+    ) internal pure returns (bool isContractPresent) {
         for (uint256 i = 0; i < mintingContracts.length; i++) {
             if (mintingContracts[i] == targetContract) {
                 isContractPresent = true;

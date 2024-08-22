@@ -21,8 +21,12 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
         "0x6513Aedb4D1593BA12e50644401D976aebDc90d8";
     address public ALICE = makeAddr("Alice");
     address public OWNER = makeAddr("Owner");
+
     /// @dev address of the token proxy contract
     address public tokenAddress;
+
+    /// @dev takes also into account the 0x prefix
+    uint256 public constant EVM_ADDRESS_LENGHT = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -50,12 +54,9 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
     function test_disableSupportedChains_emitsSupportedChainsDisabledEvent()
         public
     {
-        vm.startPrank(OWNER);
-        ITokenBridge(tokenAddress).enableSupportedChains(
-            supportedChain,
-            destinationAddress
-        );
+        _enableChain(OWNER);
 
+        vm.startPrank(OWNER);
         vm.expectEmit(false, false, false, true);
         emit SupportedChainsDisabled(supportedChain);
 
@@ -90,6 +91,9 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
     /// @notice It is a utility function to enable supported chains
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
+
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress

@@ -27,6 +27,9 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
     /// @dev address of the token proxy contract
     address public tokenAddress;
 
+    /// @dev takes also into account the 0x prefix
+    uint256 public constant EVM_ADDRESS_LENGHT = 42;
+
     function setUp() public virtual override {
         vm.startPrank(OWNER);
         super.setUp();
@@ -51,10 +54,16 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
     function test_enableSupportedChains_emitsSupportedChainsEnabledEvent()
         public
     {
+        vm.startPrank(OWNER);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+
         vm.expectEmit(true, true, false, false);
         emit SupportedChainsEnabled(supportedChain, destinationAddress);
 
-        _enableChain(OWNER);
+        ITokenBridge(tokenAddress).enableSupportedChains(
+            supportedChain,
+            destinationAddress
+        );
     }
 
     /// @notice This function is used to test the enableSupportedChains function
@@ -62,8 +71,15 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
     function test_enableSupportedChains_shouldRevert_ifNotOwnerAttemptsToEnableChains()
         public
     {
+        vm.startPrank(OWNER);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        vm.stopPrank();
+        vm.startPrank(ALICE);
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
-        _enableChain(ALICE);
+        ITokenBridge(tokenAddress).enableSupportedChains(
+            supportedChain,
+            destinationAddress
+        );
     }
 
     /// @notice This function is used to test the enableSupportedChains function
@@ -98,6 +114,9 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
     /// @notice It is a utility function to enable supported chains
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
+
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress

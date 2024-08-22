@@ -42,4 +42,26 @@ interface ITokenBridge is IAxelarExecutable {
     function getDestinationAddress(
         string calldata destinationChain
     ) external view returns (string memory destinationAddress);
+
+    /// @notice it enables an address length
+    /// @param length the length of the address
+    /// @dev only the owner can call this function
+    function enableAddressLength(uint256 length) external;
+
+    /// @notice it disables an address length
+    /// @param length the length of the address
+    /// @dev only the owner can call this function
+    function disableAddressLength(uint256 length) external;
+
+    /// @notice it enables multiple address lengths
+    /// @param mask the lengths of the addresses in a bitmask
+    /// @dev only the owner can call this function
+    /// @dev if already active values are passed they will be ignored
+    function batchEnableAddressLength(uint256 mask) external;
+
+    /// @notice it disables multiple address lengths
+    /// @param mask the lengths of the addresses in a bitmask
+    /// @dev only the owner can call this function
+    /// @dev if already inactive values are passed they will be ignored
+    function batchDisableAddressLength(uint256 mask) external;
 }

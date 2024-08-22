@@ -19,6 +19,13 @@ interface ITokenHarness {
         uint256 amount
     ) external;
 
+    /// @notice exposes _isAddressLengthEnabled
+    /// @param length length of address
+    /// @return isAddressLengthEnabled
+    function exposed_isAddressLengthEnabled(
+        uint256 length
+    ) external view returns (bool isAddressLengthEnabled);
+
     /// @notice modifies distribution fee
     /// @param newValue new value for distribution fee
     /// @dev modifies the original function to set the distribution fee to zero

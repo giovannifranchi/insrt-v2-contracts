@@ -12,6 +12,8 @@ contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
     address public OWNER = makeAddr("Owner");
     /// @dev address of the token proxy contract
     address public tokenAddress;
+    /// @dev takes also into account the 0x prefix
+    uint256 public constant EVM_ADDRESS_LENGHT = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -28,7 +30,7 @@ contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
         string calldata destinationAddress
     ) public {
         vm.assume(bytes(supportedChain).length > 0);
-        vm.assume(bytes(destinationAddress).length > 0);
+        vm.assume(bytes(destinationAddress).length == EVM_ADDRESS_LENGHT);
 
         _enableChain(OWNER, supportedChain, destinationAddress);
 
@@ -45,6 +47,7 @@ contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
         string calldata destinationAddress
     ) internal {
         vm.startPrank(_user);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress
