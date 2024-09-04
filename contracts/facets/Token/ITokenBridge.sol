@@ -13,7 +13,7 @@ interface ITokenBridge is IAxelarExecutable {
     /// @param destinationAddress the destination address of the specular deployed contract
     /// @dev only the owner can call this function
     /// @dev it emits a SupportedChainsEnabled event
-    /// @dev it allows to change the destination address of an already suppoerted chain
+    /// @dev it allows to change the destination address of an already supported chain
     function enableSupportedChains(
         string calldata destinationChain,
         string calldata destinationAddress
