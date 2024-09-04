@@ -21,11 +21,11 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
     uint8 public constant MAX_ADDRESS_LENGTH = type(uint8).max;
 
     /// @notice Axelar Gas Service contract in charge of handling gas disposal on other chains
-    IAxelarGasService public immutable axelarGasService;
+    IAxelarGasService public immutable GAS_SERVICE;
 
     constructor(address gasService) {
         if (gasService == address(0)) revert TokenBridge__InvalidAddress();
-        axelarGasService = IAxelarGasService(gasService);
+        GAS_SERVICE = IAxelarGasService(gasService);
     }
 
     /// @notice it checks if the destination chain is a valid input
@@ -161,7 +161,7 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
         bytes memory payload = abi.encode(amountToBurn, msg.sender);
 
         // Ensure to pay for the gas of the contract call on the destination chain
-        axelarGasService.payNativeGasForContractCall{ value: msg.value }(
+        GAS_SERVICE.payNativeGasForContractCall{ value: msg.value }(
             address(this),
             destinationChain,
             contractAddress,
