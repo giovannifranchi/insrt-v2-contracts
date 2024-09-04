@@ -51,7 +51,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
 
     /// @notice it tests the batchDisableAddressLength function reverts if the mask is zero
     function test_batchDisableAddressLength_shouldRevert_ifMaskIsZero() public {
-        _enableAddressLenghts(OWNER);
+        _enableAddressLengths(OWNER);
 
         vm.expectRevert(
             ITokenBridgeInternal.TokenBridge__InvalidAddressesLengths.selector
