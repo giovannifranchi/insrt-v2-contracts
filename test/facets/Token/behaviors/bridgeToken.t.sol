@@ -11,7 +11,7 @@ import { IAxelarGateway } from "@axelar/interfaces/IAxelarGateway.sol";
 
 /// @title Token_bridgeToken
 /// @notice This contract tests the functionalities of the bridgeToken function
-/// @dev It inherits from the TokenWithBridge contract and the ArbForkTest contract
+/// @dev It inherits from the TokenBridge contract and the ArbForkTest contract
 /// @dev For changing fork it is sufficient to change the ForkTest inheritance
 contract Token_bridgeToken is ArbForkTest, TokenBridge {
     /// @notice Event emitted by Axelar Gateway when a contract call is made properly
