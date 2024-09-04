@@ -81,7 +81,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it tests the batchDisableAddressLength function correctly disables all lengths
-    function test_batchDisableAddressLength_correctlyDisablesAllLenghts()
+    function test_batchDisableAddressLength_correctlyDisablesAllLengths()
         public
     {
         _enableAddressLenghts(OWNER);
