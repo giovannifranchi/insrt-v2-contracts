@@ -20,7 +20,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     uint256 public constant SOLANA_ADDRESS_LENGTH = 32;
     uint256 public constant COSMOS_ADDRESS_LENGTH = 40;
     uint256 public constant POLKADOT_ADDRESS_LENGTH = 44;
-    uint256[] public lenghts = [
+    uint256[] public lengths = [
         EVM_ADDRESS_LENGTH,
         SOLANA_ADDRESS_LENGTH,
         COSMOS_ADDRESS_LENGTH,
@@ -44,7 +44,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
         vm.startPrank(ALICE);
         ITokenBridge(tokenAddress).batchDisableAddressLength(
-            _createBitMask(lenghts)
+            _createBitMask(lengths)
         );
         vm.stopPrank();
     }
@@ -88,11 +88,11 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
 
         vm.startPrank(OWNER);
         ITokenBridge(tokenAddress).batchDisableAddressLength(
-            _createBitMask(lenghts)
+            _createBitMask(lengths)
         );
 
-        for (uint256 i = 0; i < lenghts.length; i++) {
-            assert(!token.exposed_isAddressLengthEnabled(lenghts[i]));
+        for (uint256 i = 0; i < lengths.length; i++) {
+            assert(!token.exposed_isAddressLengthEnabled(lengths[i]));
         }
     }
 
@@ -102,7 +102,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     {
         _enableAddressLengths(OWNER);
 
-        uint256 mask = _createBitMask(lenghts);
+        uint256 mask = _createBitMask(lengths);
         vm.expectEmit(true, false, false, false);
         emit AddressLengthsDisabled(mask);
         vm.startPrank(OWNER);
@@ -157,7 +157,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     function _enableAddressLengths(address actor) internal {
         vm.startPrank(actor);
         ITokenBridge(tokenAddress).batchEnableAddressLength(
-            _createBitMask(lenghts)
+            _createBitMask(lengths)
         );
         vm.stopPrank();
     }
