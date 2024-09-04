@@ -28,7 +28,7 @@ interface ITokenBridge is IAxelarExecutable {
     /// @notice it bridges a token from the source chain to the destination chain
     /// @param destinationChain the destination chain
     /// @param amount the amount of token to bridge
-    /// @dev it emits a ToeknBridgeInitilised event
+    /// @dev it emits a TokenBridgeInitialised event
     /// @dev it is payable because it needs to receive native tokens for gas functionalities
     /// @dev it can transfer the entire balance of an account if the amount is set to type(uint256).max
     function bridgeToken(
