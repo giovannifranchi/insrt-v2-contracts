@@ -182,9 +182,8 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
     /// @notice it enables multiple address lengths
     /// @param mask the address lengths passed through a bitmask
     /// @dev it could be useful to enable multiple address lengths at once for cases where chains have different address lengths (solana: 32 to 44)
-    /// @dev while not very user-friendly, it is a powerful tool to enable multiple address lengths at once
     function _batchEnableAddressLength(uint256 mask) internal {
-        // checks that the cannot set 0 as a valid address length
+        // checks that the bitmask is not empty and that cannot set 0 as a valid address length
         if (mask == 0 || (mask & 1) != 0)
             revert TokenBridge__InvalidAddressesLengths();
 
@@ -195,7 +194,6 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
     /// @notice it disables multiple address lengths
     /// @param mask the address lengths passed through a bitmask
     /// @dev it could be useful to disable multiple address lengths at once for cases where chains have different address lengths (solana: 32 to 44)
-    /// @dev while not very user-friendly, it is a powerful tool to enable multiple address lengths at once
     function _batchDisableAddressLength(uint256 mask) internal {
         if (mask == 0 || (mask & 1) != 0)
             revert TokenBridge__InvalidAddressesLengths();
