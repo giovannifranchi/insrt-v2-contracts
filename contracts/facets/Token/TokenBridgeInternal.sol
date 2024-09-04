@@ -228,7 +228,7 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
 
     /// @notice it toggles the allowed address length
     /// @param length the address length
-    function _toggleAddressLenght(uint256 length) internal {
+    function _toggleAddressLength(uint256 length) internal {
         Storage.layout().allowedAddressLengthBitMap ^= (1 << length);
     }
 
