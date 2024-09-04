@@ -179,16 +179,6 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
         );
     }
 
-    /// @notice it hashes a string
-    /// @param str the string to hash
-    /// @return hashedString
-    /// @dev it is an utility function used to enable string comparison
-    function _hashString(
-        string memory str
-    ) internal pure returns (bytes32 hashedString) {
-        return hashedString = keccak256(abi.encodePacked(str));
-    }
-
     /// @notice it enables multiple address lengths
     /// @param mask the address lengths passed through a bitmask
     /// @dev it could be useful to enable multiple address lengths at once for cases where chains have different address lengths (solana: 32 to 44)
@@ -292,5 +282,15 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
         _claim(receiver);
         _mint(receiver, amount);
         emit TokenBridgeFinalized(sourceChain, sourceAddress, amount, receiver);
+    }
+
+    /// @notice it hashes a string
+    /// @param str the string to hash
+    /// @return hashedString
+    /// @dev it is an utility function used to enable string comparison
+    function _hashString(
+        string memory str
+    ) internal pure returns (bytes32 hashedString) {
+        return hashedString = keccak256(abi.encodePacked(str));
     }
 }
