@@ -222,7 +222,7 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
         if (!_isAddressLengthEnabled(length))
             revert TokenBridge__AddressLengthNotEnabled();
 
-        _toggleAddressLenght(length);
+        _toggleAddressLength(length);
         emit AddressLengthDisabled(length);
     }
 

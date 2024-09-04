@@ -115,7 +115,7 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
 
-        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
 
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,

@@ -164,10 +164,10 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
 
     /// @notice it is a utility function to create a bitmask of address lengths
     function _createBitMask(
-        uint256[] memory lengths
+        uint256[] memory newLengths
     ) internal pure returns (uint256 mask) {
-        for (uint256 i = 0; i < lengths.length; i++) {
-            mask |= (1 << lengths[i]);
+        for (uint256 i = 0; i < newLengths.length; i++) {
+            mask |= (1 << newLengths[i]);
         }
     }
 }
