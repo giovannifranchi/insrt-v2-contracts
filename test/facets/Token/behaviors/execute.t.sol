@@ -114,7 +114,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
         );
     }
 
-    /// @notice It is a utility function to approve contract calls an bypass the original signature functionality
+    /// @notice It is a utility function to approve contract calls and bypass the original signature functionality
     function _approveContractCall() internal {
         vm.startPrank(AXELAR_RELAYER);
 
