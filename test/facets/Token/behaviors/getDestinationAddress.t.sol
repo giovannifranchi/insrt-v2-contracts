@@ -13,7 +13,7 @@ contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
     /// @dev address of the token proxy contract
     address public tokenAddress;
     /// @dev takes also into account the 0x prefix
-    uint256 public constant EVM_ADDRESS_LENGHT = 42;
+    uint256 public constant EVM_ADDRESS_LENGTH = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
