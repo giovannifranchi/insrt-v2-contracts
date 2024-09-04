@@ -18,7 +18,7 @@ abstract contract TokenBridgeInternal is TokenInternal, ITokenBridgeInternal {
     uint256 public constant MIN_GAS_PER_TX = 0.001 ether;
 
     /// @notice Maximum address length that can be stored in a uint256 bitmap
-    uint8 public constant MAX_ADDRESS_LENGTH = 255;
+    uint8 public constant MAX_ADDRESS_LENGTH = type(uint8).max;
 
     /// @notice Axelar Gas Service contract in charge of handling gas disposal on other chains
     IAxelarGasService public immutable axelarGasService;
