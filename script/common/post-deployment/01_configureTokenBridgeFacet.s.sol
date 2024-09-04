@@ -8,8 +8,9 @@ import { ITokenBridge } from "../../../contracts/facets/Token/ITokenBridge.sol";
 import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 import { IDiamondWritableInternal } from "@solidstate/contracts/proxy/diamond/writable/IDiamondWritableInternal.sol";
 import { Script, console } from "forge-std/Script.sol";
-
 import { IToken } from "../../../contracts/facets/Token/IToken.sol";
+import { IMultiSigWallet } from "./IMultiSigWallet.sol";
+import { IDiamondWritable } from "@solidstate/contracts/proxy/diamond/writable/IDiamondWritable.sol";
 
 /// @title ConfigureTokenBridgeFacet
 /// @dev deploys the TokenBridge facet and cuts it onto the TokenProxy diamond
@@ -20,6 +21,9 @@ contract ConfigureTokenBridgeFacet is Script {
         address gasService = vm.envAddress("GAS_SERVICE_ADDRESS");
         address payable tokenProxyAddress = payable(
             vm.envAddress("TOKEN_PROXY_ADDRESS")
+        );
+        address multiSigWalletAddress = vm.envAddress(
+            "MULTISIG_WALLET_ADDRESS"
         );
 
         vm.startBroadcast(deployerPrivateKey);
@@ -33,11 +37,19 @@ contract ConfigureTokenBridgeFacet is Script {
             address(tokenBridgeFacet)
         );
 
-        // cut TokenBridge facet onto TokenProxy diamond
-        ITokenProxy(tokenProxyAddress).diamondCut(
+        // create data for diamond cut to submit to multisig wallet
+        bytes memory data = abi.encodeWithSelector(
+            IDiamondWritable.diamondCut.selector,
             tokenBridgeFacetCut,
             address(0),
             ""
+        );
+
+        // submit transaction to multisig wallet
+        IMultiSigWallet(multiSigWalletAddress).submitTransaction(
+            tokenProxyAddress,
+            0,
+            data
         );
 
         vm.stopBroadcast();
