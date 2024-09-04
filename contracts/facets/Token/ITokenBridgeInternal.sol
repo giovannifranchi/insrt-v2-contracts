@@ -6,7 +6,7 @@ pragma solidity 0.8.19;
 /// @notice it is the interface for the Token Bridge Internal
 /// @dev it contains all the errors and events of the TokenBridgeInternal
 interface ITokenBridgeInternal {
-    /// @notice it is thown when the chain is not supported
+    /// @notice it is thrown when the chain is not supported
     error TokenBridge__UnsupportedChain();
 
     /// @notice it is thown when the chain is invalid
