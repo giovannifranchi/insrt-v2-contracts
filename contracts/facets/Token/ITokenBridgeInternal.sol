@@ -43,15 +43,21 @@ interface ITokenBridgeInternal {
     error TokenBridge__NotCorrectSourceAddress();
 
     /// @notice it is emitted when the chain is enabled
+    /// @param destinationChain the destination chain
+    /// @param destinationAddress the destination address
     event SupportedChainsEnabled(
         string indexed destinationChain,
         string indexed destinationAddress
     );
 
     /// @notice it is emitted when the chain is disabled
+    /// @param destinationChain the destination chain
     event SupportedChainsDisabled(string indexed destinationChain);
 
     /// @notice it is emitted when the token has started its bridge from the source chain
+    /// @param destinationChain the destination chain
+    /// @param destinationAddress the destination address
+    /// @param amount the amount of token to bridge
     event TokenBridgeInitialised(
         string indexed destinationChain,
         string indexed destinationAddress,
@@ -59,6 +65,10 @@ interface ITokenBridgeInternal {
     );
 
     /// @notice it is emitted when the token has finalized its bridge to the destination chain
+    /// @param destinationChain the destination chain
+    /// @param destinationAddress the destination address
+    /// @param amount the amount of token to bridge
+    /// @param receiver the receiver of the token
     event TokenBridgeFinalized(
         string indexed destinationChain,
         string destinationAddress,
