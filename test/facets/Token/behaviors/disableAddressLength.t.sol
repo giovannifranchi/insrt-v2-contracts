@@ -27,9 +27,7 @@ contract Token_disableAddressLength is TokenBridge, ArbForkTest {
     }
 
     /// @notice This function is used to test the disableAddressLength function can only be called by the owner
-    function test_disableAddressLength_shouldRevert_ifCallerIsNotOwner()
-        public
-    {
+    function test_disableAddressLength_revertsWhen_callerIsNotOwner() public {
         _enableAddressLength(EVM_ADDRESS_LENGTH);
         vm.prank(ALICE);
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
@@ -37,7 +35,7 @@ contract Token_disableAddressLength is TokenBridge, ArbForkTest {
     }
 
     /// @notice This function is used to test the disableAddressLength function reverts if the length is zero
-    function test_disableAddressLength_shouldRevert_ifLengthIsZero() public {
+    function test_disableAddressLength_revertsWhen_lengthIsZero() public {
         vm.expectRevert(
             ITokenBridgeInternal.TokenBridge__InvalidAddressLength.selector
         );
@@ -45,7 +43,7 @@ contract Token_disableAddressLength is TokenBridge, ArbForkTest {
     }
 
     /// @notice This function is used to test the disableAddressLength function reverts if the length is greater than the maximum length
-    function test_disableAddressLength_shouldRevert_ifLengthIsGreaterThanMax()
+    function test_disableAddressLength_revertsWhen_lengthIsGreaterThanMax()
         public
     {
         vm.expectRevert(
@@ -55,9 +53,7 @@ contract Token_disableAddressLength is TokenBridge, ArbForkTest {
     }
 
     /// @notice This function is used to test the disableAddressLength function reverts if the length is not enabled
-    function test_disableAddressLength_shouldRevert_ifLengthIsNotEnabled()
-        public
-    {
+    function test_disableAddressLength_revertsWhen_lengthIsNotEnabled() public {
         vm.expectRevert(
             ITokenBridgeInternal.TokenBridge__AddressLengthNotEnabled.selector
         );

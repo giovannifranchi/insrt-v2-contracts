@@ -48,7 +48,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     /// @dev tthe amount to be bridged
     uint256 public constant BRIDGE_AMOUNT = 10 ether;
     /// @dev takes also into account the 0x prefix
-    uint256 public constant EVM_ADDRESS_LENGHT = 42;
+    uint256 public constant EVM_ADDRESS_LENGTH = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -87,9 +87,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the onlySupportedChains modifier
     /// @dev It tests if bridging on an unsupported chain should not be supported
-    function test_bridgeToken_shouldRevert_whenBridgingOnUnsupportedChain()
-        public
-    {
+    function test_bridgeToken_revertsWhen_bridgingOnUnsupportedChain() public {
         vm.expectRevert(
             ITokenBridgeInternal.TokenBridge__UnsupportedChain.selector
         );
@@ -103,7 +101,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the bridgeToken function
     /// @dev It tests if bridging with zero amount should not be supported
-    function test_bridgeToken_shouldRevert_whenBridgingWithZeroAmount() public {
+    function test_bridgeToken_revertsWhen_bridgingWithZeroAmount() public {
         _enableChain(OWNER);
 
         vm.expectRevert(
@@ -119,9 +117,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the bridgeToken function
     /// @dev It tests if bridging more than the balance should not be supported
-    function test_bridgeToken_shouldRevert_whenBridgingMoreThanBalance()
-        public
-    {
+    function test_bridgeToken_revertsWhen_bridgingMoreThanBalance() public {
         _enableChain(OWNER);
 
         vm.startPrank(ALICE);
@@ -208,9 +204,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     /// @notice This function is used to test the bridgeToken function
     /// @dev It checks if the min amount of msg.value is sent with the transaction in order to fullfill AxelarGasService requirements
     /// @dev If the complete operation costs less than the value sent the value in excess gets refunded
-    function test_bridgeToken_shouldRevert_ifMinNativeAmountIsNotPayed()
-        public
-    {
+    function test_bridgeToken_revertsWhen_minNativeAmountIsNotPayed() public {
         _enableChain(OWNER);
 
         vm.expectRevert(
@@ -265,7 +259,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
 
-        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
 
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,

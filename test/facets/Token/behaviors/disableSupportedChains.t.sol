@@ -26,7 +26,7 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
     address public tokenAddress;
 
     /// @dev takes also into account the 0x prefix
-    uint256 public constant EVM_ADDRESS_LENGHT = 42;
+    uint256 public constant EVM_ADDRESS_LENGTH = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -65,7 +65,7 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if only the owner can disable a chain
-    function test_disableSupportedChains_shouldRevert_ifNotOwnerAttemptsToDisableSupportedChains()
+    function test_disableSupportedChains_revertsWhen_notOwnerAttemptsToDisableSupportedChains()
         public
     {
         _enableChain(OWNER);
@@ -78,7 +78,7 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the disableSupportedChains function
     /// @dev It tests if disabling a not enabled chain is supported
-    function test_disableSupportedChains_shouldRevert_whenDisablingNotSupportedChains()
+    function test_disableSupportedChains_revertsWhen_disablingNotSupportedChains()
         public
     {
         vm.expectRevert(
@@ -92,7 +92,7 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
 
-        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
 
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,

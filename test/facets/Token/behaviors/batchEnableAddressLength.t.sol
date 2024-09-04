@@ -19,7 +19,7 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
     uint256 public constant SOLANA_ADDRESS_LENGTH = 32;
     uint256 public constant COSMOS_ADDRESS_LENGTH = 40;
     uint256 public constant POLKADOT_ADDRESS_LENGTH = 44;
-    uint256[] public lenghts = [
+    uint256[] public lengths = [
         EVM_ADDRESS_LENGTH,
         SOLANA_ADDRESS_LENGTH,
         COSMOS_ADDRESS_LENGTH,
@@ -33,7 +33,7 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it tests the batchEnableAddressLength function can only be called by the owner
-    function test_batchEnableAddressLength_shouldRevert_ifCallerIsNotOwner()
+    function test_batchEnableAddressLength_revertsWhen_callerIsNotOwner()
         public
     {
         vm.startPrank(ALICE);
@@ -41,12 +41,12 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
 
         ITokenBridge(tokenAddress).batchEnableAddressLength(
-            _createBitMask(lenghts)
+            _createBitMask(lengths)
         );
     }
 
     /// @notice it tests the batchEnableAddressLength function reverts if the mask is zero
-    function test_batchEnableAddressLength_shouldRevert_ifMaskIsZero() public {
+    function test_batchEnableAddressLength_revertsWhen_maskIsZero() public {
         vm.expectRevert(
             ITokenBridgeInternal.TokenBridge__InvalidAddressesLengths.selector
         );
@@ -54,7 +54,7 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it tests the batchEnableAddressLength function reverts if the mask has zero in it
-    function test_batchEnableAddressLength_shouldRevert_ifMaskHasZeroInIt()
+    function test_batchEnableAddressLength_revertsWhen_maskHasZeroInIt()
         public
     {
         uint256[] memory newLengths = new uint256[](3);
@@ -70,12 +70,12 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it tests the batchEnableAddressLength function correctly enables all lengths
-    function test_batchEnableAddressLength_correctlyEnablesAllLenghts() public {
+    function test_batchEnableAddressLength_correctlyEnablesAlllengths() public {
         ITokenBridge(tokenAddress).batchEnableAddressLength(
-            _createBitMask(lenghts)
+            _createBitMask(lengths)
         );
-        for (uint256 i = 0; i < lenghts.length; i++) {
-            assert(token.exposed_isAddressLengthEnabled(lenghts[i]));
+        for (uint256 i = 0; i < lengths.length; i++) {
+            assert(token.exposed_isAddressLengthEnabled(lengths[i]));
         }
     }
 
@@ -83,7 +83,7 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
     function test_batchEnableAddressLength_emitsAddressLengthsEnabledEvent()
         public
     {
-        uint256 mask = _createBitMask(lenghts);
+        uint256 mask = _createBitMask(lengths);
         vm.expectEmit(true, false, false, false);
         emit AddressLengthsEnabled(mask);
         ITokenBridge(tokenAddress).batchEnableAddressLength(mask);
@@ -96,10 +96,10 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
         ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
         assert(token.exposed_isAddressLengthEnabled(EVM_ADDRESS_LENGTH));
         ITokenBridge(tokenAddress).batchEnableAddressLength(
-            _createBitMask(lenghts)
+            _createBitMask(lengths)
         );
-        for (uint256 i = 0; i < lenghts.length; i++) {
-            assert(token.exposed_isAddressLengthEnabled(lenghts[i]));
+        for (uint256 i = 0; i < lengths.length; i++) {
+            assert(token.exposed_isAddressLengthEnabled(lengths[i]));
         }
     }
 
@@ -110,10 +110,10 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
         ITokenBridge(tokenAddress).enableAddressLength(21);
         assert(token.exposed_isAddressLengthEnabled(21));
         ITokenBridge(tokenAddress).batchEnableAddressLength(
-            _createBitMask(lenghts)
+            _createBitMask(lengths)
         );
-        for (uint256 i = 0; i < lenghts.length; i++) {
-            assert(token.exposed_isAddressLengthEnabled(lenghts[i]));
+        for (uint256 i = 0; i < lengths.length; i++) {
+            assert(token.exposed_isAddressLengthEnabled(lengths[i]));
         }
         assert(token.exposed_isAddressLengthEnabled(21));
     }

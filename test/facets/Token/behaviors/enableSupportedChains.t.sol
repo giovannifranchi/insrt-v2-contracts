@@ -28,7 +28,7 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
     address public tokenAddress;
 
     /// @dev takes also into account the 0x prefix
-    uint256 public constant EVM_ADDRESS_LENGHT = 42;
+    uint256 public constant EVM_ADDRESS_LENGTH = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -55,7 +55,7 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
         public
     {
         vm.startPrank(OWNER);
-        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
 
         vm.expectEmit(true, true, false, false);
         emit SupportedChainsEnabled(supportedChain, destinationAddress);
@@ -68,11 +68,11 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if only the owner can enable a new chain
-    function test_enableSupportedChains_shouldRevert_ifNotOwnerAttemptsToEnableChains()
+    function test_enableSupportedChains_revertsWhen_notOwnerAttemptsToEnableChains()
         public
     {
         vm.startPrank(OWNER);
-        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
         vm.stopPrank();
         vm.startPrank(ALICE);
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
@@ -84,7 +84,7 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty chain should not be supported
-    function test_enableSupportedChains_shouldRevert_whenEnablingEmptyChains()
+    function test_enableSupportedChains_revertsWhen_enablingEmptyChains()
         public
     {
         vm.expectRevert(
@@ -100,7 +100,7 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the enableSupportedChains function
     /// @dev It tests if calling the function with an empty address should not be supported
-    function test_enableSupportedChains_shouldRevert_whenEnablingChainWithEmptyAddress()
+    function test_enableSupportedChains_revertsWhen_enablingChainWithEmptyAddress()
         public
     {
         vm.expectRevert(

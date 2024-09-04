@@ -30,7 +30,7 @@ contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
         string calldata destinationAddress
     ) public {
         vm.assume(bytes(supportedChain).length > 0);
-        vm.assume(bytes(destinationAddress).length == EVM_ADDRESS_LENGHT);
+        vm.assume(bytes(destinationAddress).length == EVM_ADDRESS_LENGTH);
 
         _enableChain(OWNER, supportedChain, destinationAddress);
 
@@ -47,7 +47,7 @@ contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
         string calldata destinationAddress
     ) internal {
         vm.startPrank(_user);
-        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,
             destinationAddress

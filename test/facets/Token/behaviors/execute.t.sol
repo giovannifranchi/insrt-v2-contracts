@@ -31,7 +31,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
         "0x8643Aedb4D1593BA12e50644401D976aebDc90e8";
 
     /// @dev takes also into account the 0x prefix
-    uint256 public constant EVM_ADDRESS_LENGHT = 42;
+    uint256 public constant EVM_ADDRESS_LENGTH = 42;
 
     function setUp() public virtual override {
         vm.startPrank(OWNER);
@@ -47,7 +47,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
     /// @dev It checks whether the transaction has been approved by the AxelarGateway
     /// @dev Any address can call the execute function but the call will only be executed if the gateway has approved it
     /// @dev There is not a single defined address for Axelar relayers
-    function test_execute_shouldRevert_ifGatewayHasNotApprovedTheCall() public {
+    function test_execute_revertsWhen_gatewayHasNotApprovedTheCall() public {
         _enableChain(OWNER);
 
         bytes memory payload = abi.encode(AMOUNT_TO_MINT, ALICE);
@@ -81,7 +81,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
     }
 
     /// @notice This function is testing whether an approved call from axelar can be executed even though the address from the source chain is not supported
-    function test_execute_shouldRevert_whenCallIsMadeFromUnsupportedAddresses()
+    function test_execute_revertsWhen_callIsMadeFromUnsupportedAddresses()
         public
     {
         _enableChain(OWNER);
@@ -106,7 +106,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
     function _enableChain(address _user) internal {
         vm.startPrank(_user);
 
-        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGHT);
+        ITokenBridge(tokenAddress).enableAddressLength(EVM_ADDRESS_LENGTH);
 
         ITokenBridge(tokenAddress).enableSupportedChains(
             supportedChain,

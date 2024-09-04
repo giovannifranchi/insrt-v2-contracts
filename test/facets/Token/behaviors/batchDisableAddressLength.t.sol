@@ -36,10 +36,10 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it tests the batchDisableAddressLength function can only be called by the owner
-    function test_batchDisableAddressLength_shouldRevert_ifCallerIsNotOwner()
+    function test_batchDisableAddressLength_revertsWhen_callerIsNotOwner()
         public
     {
-        _enableAddressLenghts(OWNER);
+        _enableAddressLengths(OWNER);
 
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
         vm.startPrank(ALICE);
@@ -50,7 +50,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it tests the batchDisableAddressLength function reverts if the mask is zero
-    function test_batchDisableAddressLength_shouldRevert_ifMaskIsZero() public {
+    function test_batchDisableAddressLength_revertsWhen_maskIsZero() public {
         _enableAddressLengths(OWNER);
 
         vm.expectRevert(
@@ -61,10 +61,10 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it tests the batchDisableAddressLength function reverts if the mask has zero in it
-    function test_batchDisableAddressLength_shouldRevert_ifMaskHasZeroInIt()
+    function test_batchDisableAddressLength_revertsWhen_maskHasZeroInIt()
         public
     {
-        _enableAddressLenghts(OWNER);
+        _enableAddressLengths(OWNER);
 
         uint256[] memory newLengths = new uint256[](3);
         newLengths[0] = EVM_ADDRESS_LENGTH;
@@ -84,7 +84,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     function test_batchDisableAddressLength_correctlyDisablesAllLengths()
         public
     {
-        _enableAddressLenghts(OWNER);
+        _enableAddressLengths(OWNER);
 
         vm.startPrank(OWNER);
         ITokenBridge(tokenAddress).batchDisableAddressLength(
@@ -100,7 +100,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     function test_batchDisableAddressLength_emitsAddressLengthsDisabledEvent()
         public
     {
-        _enableAddressLenghts(OWNER);
+        _enableAddressLengths(OWNER);
 
         uint256 mask = _createBitMask(lenghts);
         vm.expectEmit(true, false, false, false);
@@ -113,7 +113,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     function test_batchDisableAddressLength_itCorrectlyDisablesSomeLegthsWithoutAffectingTheOthers()
         public
     {
-        _enableAddressLenghts(OWNER);
+        _enableAddressLengths(OWNER);
 
         uint256[] memory newLengths = new uint256[](2);
         newLengths[0] = EVM_ADDRESS_LENGTH;
@@ -128,10 +128,11 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
         vm.stopPrank();
     }
 
+    /// @notice it tests the batchDisableAddressLength function correctly disables lengths without affecting already disabled ones
     function test_batchDisableAddressLength_correctlyDisablesLengthsWithoutAffectingAlreadyDisabledOnes()
         public
     {
-        _enableAddressLenghts(OWNER);
+        _enableAddressLengths(OWNER);
 
         uint256[] memory newLengths = new uint256[](2);
         newLengths[0] = EVM_ADDRESS_LENGTH;
@@ -153,7 +154,7 @@ contract Token_batchDisableAddressLength is ArbForkTest, TokenBridge {
     }
 
     /// @notice it is a utility function to enable address lengths
-    function _enableAddressLenghts(address actor) internal {
+    function _enableAddressLengths(address actor) internal {
         vm.startPrank(actor);
         ITokenBridge(tokenAddress).batchEnableAddressLength(
             _createBitMask(lenghts)
