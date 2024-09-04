@@ -80,7 +80,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
         vm.assertEq(token.balanceOf(ALICE), AMOUNT_TO_MINT);
     }
 
-    /// @notice This function is testing whether an approved call from axelar can be executed even tough the address from the source chain is not supported
+    /// @notice This function is testing whether an approved call from axelar can be executed even though the address from the source chain is not supported
     function test_execute_shouldRevert_whenCallIsMadeFromUnsupportedAddresses()
         public
     {
