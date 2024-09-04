@@ -138,7 +138,7 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
     /// @notice This function is used to test the bridgeToken function
     /// @dev It tests if bridging with uint max transfers all the balance
-    function test_bridgeToken_bridgingWithUintMax_shouldTransferAllBalance()
+    function test_bridgeToken_transfersAllBalance_whenAmountIsUint256Max()
         public
     {
         _enableChain(OWNER);
