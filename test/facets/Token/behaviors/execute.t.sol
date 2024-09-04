@@ -62,7 +62,7 @@ contract Token_execute is TokenBridge, ArbForkTest {
             payload
         );
     }
-    /// @notice This function is used to test the execute function proper execution
+    /// @notice This function is used to test the execute function's proper execution
     function test_execute_receiveContractCallAndExecute() public {
         _enableChain(OWNER);
         _approveContractCall();
