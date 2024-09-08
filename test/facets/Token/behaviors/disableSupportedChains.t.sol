@@ -7,6 +7,7 @@ import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title Token_disableSupportedChains
 /// @notice This contract tests the functionalities of DisableSupportedChains function
@@ -34,6 +35,16 @@ contract Token_disableSupportedChains is ArbForkTest, TokenBridge {
         initTokenBridge(ARBITRUM_AXELAR_GATEWAY, ARBITRUM_AXELAR_GAS_SERVICE);
         tokenAddress = address(token);
         vm.stopPrank();
+
+        // assert setup is correct
+        assert(
+            address(IAxelarExecutable(tokenAddress).gateway()) ==
+                ARBITRUM_AXELAR_GATEWAY
+        );
+        assert(
+            address(ITokenBridge(tokenAddress).getGasService()) ==
+                ARBITRUM_AXELAR_GAS_SERVICE
+        );
     }
 
     /// @notice This function is used to test the disableSupportedChains function

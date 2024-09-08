@@ -5,6 +5,7 @@ pragma solidity 0.8.19;
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title Token_getDestinationAddress
 /// @notice This contract tests the functionalities of supportedChain function
@@ -21,6 +22,16 @@ contract Token_getDestinationAddress is ArbForkTest, TokenBridge {
         initTokenBridge(ARBITRUM_AXELAR_GATEWAY, ARBITRUM_AXELAR_GAS_SERVICE);
         tokenAddress = address(token);
         vm.stopPrank();
+
+        // assert setup is correct
+        assert(
+            address(IAxelarExecutable(tokenAddress).gateway()) ==
+                ARBITRUM_AXELAR_GATEWAY
+        );
+        assert(
+            address(ITokenBridge(tokenAddress).getGasService()) ==
+                ARBITRUM_AXELAR_GAS_SERVICE
+        );
     }
 
     /// @notice This function is used to test the supportedChains function

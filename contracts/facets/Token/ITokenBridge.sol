@@ -3,6 +3,7 @@
 pragma solidity 0.8.19;
 
 import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
+import { IAxelarGasService } from "@axelar/interfaces/IAxelarGasService.sol";
 
 /// @title ITokenBridge
 /// @notice it is the interface for the Token Bridge
@@ -64,4 +65,8 @@ interface ITokenBridge is IAxelarExecutable {
     /// @dev only the owner can call this function
     /// @dev if already inactive values are passed they will be ignored
     function batchDisableAddressLength(uint256 mask) external;
+
+    /// @notice it returns the gas service
+    /// @return IAxelarGasService
+    function getGasService() external view returns (IAxelarGasService);
 }

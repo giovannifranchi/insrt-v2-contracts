@@ -8,6 +8,7 @@ import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.so
 import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
 import { IAxelarGasService } from "@axelar/interfaces/IAxelarGasService.sol";
 import { IAxelarGateway } from "@axelar/interfaces/IAxelarGateway.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title Token_bridgeToken
 /// @notice This contract tests the functionalities of the bridgeToken function
@@ -60,6 +61,15 @@ contract Token_bridgeToken is ArbForkTest, TokenBridge {
 
         assert(
             _assertContractIsPresent(token.mintingContracts(), tokenAddress)
+        );
+
+        assert(
+            address(IAxelarExecutable(tokenAddress).gateway()) ==
+                ARBITRUM_AXELAR_GATEWAY
+        );
+        assert(
+            address(ITokenBridge(tokenAddress).getGasService()) ==
+                ARBITRUM_AXELAR_GAS_SERVICE
         );
 
         vm.startPrank(MINTER);

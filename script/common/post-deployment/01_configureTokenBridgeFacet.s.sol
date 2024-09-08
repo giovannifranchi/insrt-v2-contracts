@@ -61,7 +61,7 @@ contract ConfigureTokenBridgeFacet is Script {
         address facetAddress
     ) internal pure returns (ITokenProxy.FacetCut[] memory) {
         // map the TokenBridge function selectors to their respective interfaces
-        bytes4[] memory tokenBridgeFunctionSelectors = new bytes4[](11);
+        bytes4[] memory tokenBridgeFunctionSelectors = new bytes4[](12);
 
         tokenBridgeFunctionSelectors[0] = ITokenBridge.bridgeToken.selector;
         tokenBridgeFunctionSelectors[1] = ITokenBridge
@@ -85,11 +85,12 @@ contract ConfigureTokenBridgeFacet is Script {
         tokenBridgeFunctionSelectors[7] = ITokenBridge
             .batchDisableAddressLength
             .selector;
-        tokenBridgeFunctionSelectors[8] = IAxelarExecutable.execute.selector;
-        tokenBridgeFunctionSelectors[9] = IAxelarExecutable
+        tokenBridgeFunctionSelectors[8] = ITokenBridge.getGasService.selector;
+        tokenBridgeFunctionSelectors[9] = IAxelarExecutable.execute.selector;
+        tokenBridgeFunctionSelectors[10] = IAxelarExecutable
             .executeWithToken
             .selector;
-        tokenBridgeFunctionSelectors[10] = IAxelarExecutable.gateway.selector;
+        tokenBridgeFunctionSelectors[11] = IAxelarExecutable.gateway.selector;
 
         ITokenProxy.FacetCut
             memory tokenBridgeFacetCut = IDiamondWritableInternal.FacetCut({

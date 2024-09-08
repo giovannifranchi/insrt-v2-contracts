@@ -4,6 +4,8 @@ pragma solidity 0.8.19;
 
 import { IAxelarGateway } from "@axelar/interfaces/IAxelarGateway.sol";
 
+import { IAxelarGasService } from "@axelar/interfaces/IAxelarGasService.sol";
+
 import { AxelarExecutable } from "@axelar/executable/AxelarExecutable.sol";
 
 import { OwnableInternal } from "@solidstate/contracts/access/ownable/OwnableInternal.sol";
@@ -80,6 +82,11 @@ contract TokenBridge is
     /// @inheritdoc ITokenBridge
     function batchDisableAddressLength(uint256 mask) external onlyOwner {
         _batchDisableAddressLength(mask);
+    }
+
+    /// @inheritdoc ITokenBridge
+    function getGasService() external view returns (IAxelarGasService) {
+        return GAS_SERVICE;
     }
 
     /// @inheritdoc AxelarExecutable

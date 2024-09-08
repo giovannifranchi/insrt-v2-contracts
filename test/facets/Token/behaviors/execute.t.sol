@@ -40,6 +40,16 @@ contract Token_execute is TokenBridge, ArbForkTest {
         initTokenBridge(address(axelarGateway), axelarGasService);
         tokenAddress = address(token);
         vm.stopPrank();
+
+        // assert setup is correct
+        assert(
+            address(IAxelarExecutable(tokenAddress).gateway()) ==
+                address(axelarGateway)
+        );
+        assert(
+            address(ITokenBridge(tokenAddress).getGasService()) ==
+                axelarGasService
+        );
     }
 
     /// @notice This function is used to test the execute function

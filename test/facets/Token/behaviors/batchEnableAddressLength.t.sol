@@ -7,6 +7,7 @@ import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.so
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { TokenBridge } from "../TokenBridge.t.sol";
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title Token_batchEnableAddressLength
 /// @notice it tests the batchEnableAddressLength function of the TokenBridge
@@ -30,6 +31,16 @@ contract Token_batchEnableAddressLength is ArbForkTest, TokenBridge {
         super.setUp();
         initTokenBridge(ARBITRUM_AXELAR_GATEWAY, ARBITRUM_AXELAR_GAS_SERVICE);
         tokenAddress = address(token);
+
+        // assert setup is correct
+        assert(
+            address(IAxelarExecutable(tokenAddress).gateway()) ==
+                ARBITRUM_AXELAR_GATEWAY
+        );
+        assert(
+            address(ITokenBridge(tokenAddress).getGasService()) ==
+                ARBITRUM_AXELAR_GAS_SERVICE
+        );
     }
 
     /// @notice it tests the batchEnableAddressLength function can only be called by the owner

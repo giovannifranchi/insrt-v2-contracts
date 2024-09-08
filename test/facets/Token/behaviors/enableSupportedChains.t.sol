@@ -7,6 +7,7 @@ import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
 import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title Token_enableSupportedChains
 /// @notice This contract tests the functionalities of the enableSupportedChains function
@@ -36,6 +37,16 @@ contract Token_enableSupportedChains is ArbForkTest, TokenBridge {
         initTokenBridge(ARBITRUM_AXELAR_GATEWAY, ARBITRUM_AXELAR_GAS_SERVICE);
         tokenAddress = address(token);
         vm.stopPrank();
+
+        // assert setup is correct
+        assert(
+            address(IAxelarExecutable(tokenAddress).gateway()) ==
+                ARBITRUM_AXELAR_GATEWAY
+        );
+        assert(
+            address(ITokenBridge(tokenAddress).getGasService()) ==
+                ARBITRUM_AXELAR_GAS_SERVICE
+        );
     }
 
     /// @notice This function is used to test the enableSupportedChains function

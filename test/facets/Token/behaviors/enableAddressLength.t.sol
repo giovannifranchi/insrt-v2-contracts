@@ -7,6 +7,7 @@ import { TokenBridge } from "../../Token/TokenBridge.t.sol";
 import { ITokenBridge } from "../../../../contracts/facets/Token/ITokenBridge.sol";
 import { ITokenBridgeInternal } from "../../../../contracts/facets/Token/ITokenBridgeInternal.sol";
 import { IOwnableInternal } from "@solidstate/contracts/access/ownable/IOwnableInternal.sol";
+import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 
 /// @title Token_enableAddressLength
 /// @notice This contract tests the functionalities of the enableAddressLength function
@@ -24,6 +25,16 @@ contract Token_enableAddressLength is ArbForkTest, TokenBridge {
         super.setUp();
         initTokenBridge(ARBITRUM_AXELAR_GATEWAY, ARBITRUM_AXELAR_GAS_SERVICE);
         tokenAddress = address(token);
+
+        // assert setup is correct
+        assert(
+            address(IAxelarExecutable(tokenAddress).gateway()) ==
+                ARBITRUM_AXELAR_GATEWAY
+        );
+        assert(
+            address(ITokenBridge(tokenAddress).getGasService()) ==
+                ARBITRUM_AXELAR_GAS_SERVICE
+        );
     }
 
     /// @notice This function is used to test the enableAddressLength function can only be called by the owner
