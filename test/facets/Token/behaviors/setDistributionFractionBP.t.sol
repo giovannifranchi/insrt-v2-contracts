@@ -43,7 +43,7 @@ contract Token_setDistributionFractionBP is
     }
 
     /// @dev ensures setDistributionFractionBP reverts when owner is not caller
-    function test_setDistributionFractionBPRevertsWhen_CallerIsNotOwner()
+    function test_setDistributionFractionBP_revertsWhen_CallerIsNotOwner()
         public
     {
         vm.expectRevert(IOwnableInternal.Ownable__NotOwner.selector);
@@ -53,7 +53,7 @@ contract Token_setDistributionFractionBP is
     }
 
     /// @dev ensures setDistributionFractionBP reverts when new value is greater than basis
-    function test_setDistributionFractionBPRevertsWhen_NewBPValueIsGreaterThanBasis()
+    function test_setDistributionFractionBP_revertsWhen_NewBPValueIsGreaterThanBasis()
         public
     {
         uint32 newDistributionFractionBP = token.BASIS() + 1;
@@ -61,5 +61,13 @@ contract Token_setDistributionFractionBP is
         vm.expectRevert(IGuardsInternal.BasisExceeded.selector);
 
         token.setDistributionFractionBP(newDistributionFractionBP);
+    }
+
+    /// @dev ensures setDistributionFractionBP reverts when new value is zero
+    function test_setDistributionFractionBP_revertsWhenValueIsZero() public {
+        vm.expectRevert(
+            ITokenInternal.DistributionFractionBPCannotBeZero.selector
+        );
+        token.setDistributionFractionBP(0);
     }
 }

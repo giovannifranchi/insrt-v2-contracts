@@ -5,6 +5,8 @@ pragma solidity 0.8.19;
 import { TokenTest } from "../Token.t.sol";
 import { ArbForkTest } from "../../../ArbForkTest.t.sol";
 
+import { ITokenInternal } from "../../../../contracts/facets/Token/ITokenInternal.sol";
+
 /// @title Token_mint
 /// @dev Token test contract for testing expected mint behavior. Tested on an Arbitrum fork.
 contract Token_mint is ArbForkTest, TokenTest {
@@ -336,5 +338,16 @@ contract Token_mint is ArbForkTest, TokenTest {
         uint256 newBalance = token.balanceOf(MINTER);
 
         assert(newBalance - oldBalance == MINT_AMOUNT - DISTRIBUTION_AMOUNT);
+    }
+
+    /// @dev ensures that mint reverts when distributionFractionBP is zero
+    /// @dev a modified version of setDistributionFee from Token Harness has been used since the regular setter doesn't allow setting the fee to zero
+    function test_mintRevertsWhenDistributionFractionBPIsZero() public {
+        token.modified_setDistributionFee(0);
+        assert(token.distributionFractionBP() == 0);
+
+        vm.startPrank(MINTER);
+        vm.expectRevert(ITokenInternal.DistributionFractionBPNotSet.selector);
+        token.mint(MINTER, 20 ether);
     }
 }
