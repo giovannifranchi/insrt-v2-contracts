@@ -1,22 +1,22 @@
 #!/usr/bin/env bash
 set -e
 
-CHAIN_ID=81457
-RPC_URL=$BLAST_RPC_URL
+CHAIN_ID=42161
+RPC_URL=$ARBITRUM_RPC_URL
 UPGRADE_SCRIPT="01_configureTokenBridgeFacetArbitrum.s.sol"
-VERIFIER_URL="https://api.blastscan.io/api"
-export CORE_BLAST_ADDRESS="0x8113E6335ddf1E6227113B429CD1F57e8E007760"
+VERIFIER_URL="https://api.arbiscan.io/api"
+export CORE_ADDRESS="0x791b648aa3bd21964417690c635040f40ce974a5"
 
 
-# Check if BLASTSCAN_API_KEY is set
-if [[ -z $BLASTSCAN_API_KEY ]]; then
-  echo -e "Error: BLASTSCAN_API_KEY is not set in .env.\n"
+# Check if ARBISCAN_API_KEY is set
+if [[ -z $$ARBISCAN_API_KEY ]]; then
+  echo -e "Error: $ARBISCAN_API_KEY is not set in .env.\n"
   exit 1
 fi
 
-# Check if BLAST_RPC_URL is set
-if [[ -z $BLAST_RPC_URL ]]; then
-  echo -e "Error: BLAST_RPC_URL is not set in .env.\n"
+# Check if ARBITRUM_RPC_URL is set
+if [[ -z $ARBITRUM_RPC_URL ]]; then
+  echo -e "Error: ARBITRUM_RPC_URL is not set in .env.\n"
   exit 1
 fi
 
