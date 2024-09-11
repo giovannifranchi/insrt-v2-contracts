@@ -9,7 +9,6 @@ import { IAxelarExecutable } from "@axelar/interfaces/IAxelarExecutable.sol";
 import { IDiamondWritableInternal } from "@solidstate/contracts/proxy/diamond/writable/IDiamondWritableInternal.sol";
 import { Script, console } from "forge-std/Script.sol";
 import { IToken } from "../../../contracts/facets/Token/IToken.sol";
-import { IMultiSigWallet } from "./IMultiSigWallet.sol";
 import { IDiamondWritable } from "@solidstate/contracts/proxy/diamond/writable/IDiamondWritable.sol";
 
 /// @title ConfigureTokenBridgeFacet
@@ -47,13 +46,6 @@ contract ConfigureTokenBridgeFacet is Script {
 
         console.log("Bytes Data for Diamond Cut: ");
         console.logBytes(data);
-
-        // submit transaction to multisig wallet
-        IMultiSigWallet(multiSigWalletAddress).submitTransaction(
-            tokenProxyAddress,
-            0,
-            data
-        );
 
         vm.stopBroadcast();
     }
