@@ -18,12 +18,6 @@ contract ConfigureTokenBridgeFacet is Script {
         uint256 deployerPrivateKey = vm.envUint("DEPLOYER_KEY");
         address gateway = vm.envAddress("GATEWAYWAY_ADDRESS");
         address gasService = vm.envAddress("GAS_SERVICE_ADDRESS");
-        address payable tokenProxyAddress = payable(
-            vm.envAddress("TOKEN_PROXY_ADDRESS")
-        );
-        address multiSigWalletAddress = vm.envAddress(
-            "MULTISIG_WALLET_ADDRESS"
-        );
 
         vm.startBroadcast(deployerPrivateKey);
 

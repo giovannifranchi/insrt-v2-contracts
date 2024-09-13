@@ -38,6 +38,6 @@ DEPLOYER_BALANCE_ETH=$(cast from-wei $DEPLOYER_BALANCE_DEC)
 echo -e "Deployer address balance is $DEPLOYER_BALANCE_ETH ETH.\n"
 
 # Run forge scripts
-forge script script/Blast/upgrade/${UPGRADE_SCRIPT} --rpc-url $RPC_URL --verify --broadcast --verifier-url $VERIFIER_URL
+forge script script/Arbitrum/upgrade/${UPGRADE_SCRIPT} --rpc-url $RPC_URL --verify --broadcast --verifier-url $VERIFIER_URL
 
 echo -e "\nDeployer Address: $DEPLOYER_ADDRESS\n"
