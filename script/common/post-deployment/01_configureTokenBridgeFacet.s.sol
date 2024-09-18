@@ -48,13 +48,6 @@ contract ConfigureTokenBridgeFacet is Script {
         console.log("Bytes Data for Diamond Cut: ");
         console.logBytes(data);
 
-        // submit transaction to multisig wallet
-        IMultiSigWallet(multiSigWalletAddress).submitTransaction(
-            tokenProxyAddress,
-            0,
-            data
-        );
-
         vm.stopBroadcast();
     }
 
