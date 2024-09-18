@@ -13,6 +13,12 @@ interface ITokenInternal {
     /// tokens
     error NotMintingContract();
 
+    /// @notice thrown when attempiting to mint but the distributionFractionBP is not set
+    error DistributionFractionBPNotSet();
+
+    /// @notice thrown when attempting to set the distributionFractionBP to zero
+    error DistributionFractionBPCannotBeZero();
+
     /// @notice emitted when a new distributionFractionBP value is set
     /// @param distributionFractionBP the new distributionFractionBP value
     event DistributionFractionSet(uint32 distributionFractionBP);
